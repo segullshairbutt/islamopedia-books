@@ -1,0 +1,11 @@
+{
+    "python.defaultInterpreterPath": "",
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": "\\.md|yml$",
+                "cmd": "${PWD}/.venv/bin/jupyter-book build template_book"
+            }
+        ]
+    }
+}
