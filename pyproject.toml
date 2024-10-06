@@ -7,7 +7,7 @@ authors = ["Gul Shair Butt <segullshairbutt@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 jupyter-book = "^1.0.2"
-sphinx-autobuild = "^2024.9.19"
+pyppeteer = "^2.0.0"
 
 [tool.poetry.dev-dependencies]
 

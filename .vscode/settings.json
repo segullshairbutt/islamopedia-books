@@ -3,8 +3,8 @@
     "emeraldwalk.runonsave": {
         "commands": [
             {
-                "match": "\\.md|yml$",
-                "cmd": "${PWD}/.venv/bin/jupyter-book build template_book"
+                "match": "\\.md|.yml|.css$",
+                "cmd": "${PWD}/.venv/bin/jupyter-book build --all books/template_book"
             }
         ]
     }

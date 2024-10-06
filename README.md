@@ -4,8 +4,8 @@ This is a helper repository of [Islamopedia](https://github.com/segullshairbutt/
 ## Contribution workflow
 A new PR should be created against the work's small unit (as much as possible). It can be one page of the book, a book chapter, or a group of chapters. But the smaller the PR, the easier to review.
 
-1. [Directory structuring and writing a book](./docs/directory-structuring.md):
-    We use GitHub actions to verify on each commit that the directory structuring is according to our standard and the data on our repository is identical to the data stored in this repository. 
+1. [Writing a book in Jupyter book](./docs/directory-structuring.md): 
+    We use Juptyer book to write the books. This is a guide on how to write a book in Jupyter book.
 
 2. A list of books which are on the track coming ahead
     1. Books of Fiqh
