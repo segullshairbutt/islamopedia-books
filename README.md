@@ -1,5 +1,14 @@
 # islamopedia-books
-This is a helper repository of [Islamopedia](https://github.com/segullshairbutt/islamopedia/) to keep the backup of the books in plain text format. 
+This is a helper repository of [Islamopedia](https://github.com/segullshairbutt/islamopedia/) to keep the backup of the books in text format. This will allow us to keep the books in a version control system and allow us to collaborate on the books easily.
+
+## How to start writing a new book
+1. Clone the repository
+2. [Setup the development environment]('./docs/local-setup.md')
+3. Follow the [directory structuring](./docs/directory-structuring.md) to create a new book
+
+## Definition of Done
+1. The design of the page should be consistent to the book. Because, in future in our tool we will provide the functionality to reference to the line numbers of the books. So, we need to make sure that we are even taking care of the line breaks.
+2. The writer should use the proper headings which will help us to keep the record and build the table of content programmatically. 
 
 ## Contribution workflow
 A new PR should be created against the work's small unit (as much as possible). It can be one page of the book, a book chapter, or a group of chapters. But the smaller the PR, the easier to review.
