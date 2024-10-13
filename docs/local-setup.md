@@ -77,3 +77,6 @@ The development experience can be improved by using the auto-build feature of VS
 ```
 
 Replace `COMMAND_TO_BUILD_BOOK` with the command to build the book. It could be either the command to build the book using the Python environment or the Docker container. You can use the any command based on your setup as they are mentioned above.
+
+NOTE: We are using `--all` flag to build the entire book. If you want to build only the changed files, you can remove the `--all` flag from the command. It should be removed from `Makefile` if you are using the `make` command to build the book.
+ 
