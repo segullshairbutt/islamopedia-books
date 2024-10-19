@@ -3,7 +3,7 @@ This is a helper repository of [Islamopedia](https://github.com/segullshairbutt/
 
 ## How to start writing a new book
 1. Clone the repository
-2. [Setup the development environment]('./docs/local-setup.md')
+2. [Setup the development environment](./docs/local-setup.md)
 3. Follow the [directory structuring](./docs/directory-structuring.md) to create a new book
 
 ## Definition of Done
