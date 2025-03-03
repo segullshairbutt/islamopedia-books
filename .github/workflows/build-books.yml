@@ -1,0 +1,35 @@
+# This workflow will install Python dependencies and build the books.
+
+name: Python application
+
+on:
+  push:
+    branches:
+      - '**' # Push events to all branches
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build the book using docker image
+      run: |
+        docker build -t books-builder .
+        for dir in books/*/; do
+          if [ -d "$dir" ]; then
+              docker run --rm -v "$(pwd)/books/":/app/books books-builder jupyter-book build "/app/books/$(basename "$dir")"
+          fi
+        done
+    - name: Commit and push changes
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add books/
+        git commit -m "Build books using GitHub Actions"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
