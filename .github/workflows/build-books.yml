@@ -1,6 +1,6 @@
 # This workflow will install Python dependencies and build the books.
 
-name: Python application
+name: Islamopedia Books Builder
 
 on:
   push:

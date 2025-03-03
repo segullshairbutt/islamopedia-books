@@ -1,6 +1,9 @@
 # islamopedia-books
 This is a helper repository of [Islamopedia](https://github.com/segullshairbutt/islamopedia/) to keep the backup of the books in text format. This will allow us to keep the books in a version control system and allow us to collaborate on the books easily.
 
+## Static pages of the books
+- [Demo Book](./books/template_book/_build/html/index.html)
+
 ## How to start writing a new book
 1. Clone the repository
 2. [Setup the development environment](./docs/local-setup.md)
