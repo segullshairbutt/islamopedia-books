@@ -6,8 +6,7 @@
       "books/",
       "docs/",
       "Dockerfile/",
-      "**/.*",
-      "**/node_modules/**"
+      "**/.*"
     ]
   }
 }
