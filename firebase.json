@@ -1,0 +1,13 @@
+{
+  "hosting": {
+    "public": "static",
+    "ignore": [
+      "firebase.json",
+      "books/",
+      "docs/",
+      "Dockerfile/",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}
