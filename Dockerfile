@@ -1,7 +1,7 @@
 FROM python:3.12.7-slim-bullseye
 WORKDIR /app
 # Installing poetry
-RUN pip install poetry==1.8.3
+RUN pip install poetry==2.0.0
 
 # Copying the poetry.lock and pyproject.toml files
 COPY pyproject.toml poetry.lock /app/
