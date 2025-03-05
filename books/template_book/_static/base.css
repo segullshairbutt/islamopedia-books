@@ -1,15 +1,42 @@
-/* Importing a Google Font */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu&display=swap');
+/* Importing Jameel Nori Nastaleeq */
+@import url("./font/font-face.css");
 
 /* Apply the font to the body text */
 * {
-    font-family: 'Noto Nastaliq Urdu', serif;
-    direction: rtl;
-    justify-content: right !important;
+  direction: rtl;
+  justify-content: right !important;
+  font-family: "Jameel Noori Nastaleeq", system-ui, Arial, sans-serif;
 }
 
 /* Apply a different font to headings */
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Noto Nastaliq Urdu', serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Jameel Noori Nastaleeq", system-ui, Arial, sans-serif;
 }
 
+/* Apply to all text in the book */
+p {
+  font-size: 1.375em;
+  margin-bottom: 1.15rem;
+}
+
+/* Footer Navigation (Customize to adopt rtl) */
+.prev-next-area a.right-next {
+    float: left !important;
+}
+
+.prev-next-area a.right-next svg {
+    transform: rotate(180deg);
+}
+
+.prev-next-area a.left-prev svg {
+    transform: rotate(-180deg);
+}
+
+.prev-next-area a.left-prev {
+    float: right !important;
+}
