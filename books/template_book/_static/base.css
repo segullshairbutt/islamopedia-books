@@ -11,5 +11,10 @@
 /* Apply a different font to headings */
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Noto Nastaliq Urdu', serif;
+    line-height: 1.5;
 }
 
+/* Apply to all text in the book */
+p {
+    line-height: 2.5;
+}
