@@ -1,0 +1,8 @@
+@font-face {
+  font-family: "Jameel Noori Nastaleeq";
+  src: url("./JameelNooriNastaleeq.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF;
+}
