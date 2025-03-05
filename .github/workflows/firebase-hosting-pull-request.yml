@@ -12,7 +12,7 @@ jobs:
       - name: Set execute permissions for build script
         run: chmod +x ./scripts/build_books.sh
       - name: Build the book using docker image
-        run: ./scripts/build_all_books.sh
+        run: ./scripts/build_books.sh
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
