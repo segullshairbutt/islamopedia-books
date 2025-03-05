@@ -1,0 +1,17 @@
+name: Deploy to Firebase Hosting on PR
+'on': pull_request
+jobs:
+  build_and_preview:
+    if: '${{ github.event.pull_request.head.repo.full_name == github.repository }}'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set execute permissions for build script
+        run: chmod +x ./scripts/build_books.sh
+      - name: Build the book using docker image
+        run: ./scripts/build_books.sh
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_ISLAMOPEDIA_BOOKS }}'
+          projectId: islamopedia-books
