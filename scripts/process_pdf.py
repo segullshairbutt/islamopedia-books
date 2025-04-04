@@ -11,7 +11,7 @@ def clean_english_gibberish(text):
     return "\n".join(urdu_lines)
 
 # OpenAI API setup
-client = openai.OpenAI(api_key="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")
+client = openai.OpenAI(os.environ.get("OPENAI_API_KEY"))
 
 # Define base directories
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
