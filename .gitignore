@@ -1,4 +1,10 @@
 .venv
 **/_build
 .vscode/
+.env
 .DS_Store
+env
+segulshairbutt-google-fusion-ai.json
+images/
+text_files_folder
+uploads/
