@@ -1,49 +1,55 @@
-# PDF to OCR Text Extractor – Code Summary
+## How to Run the PDF Extractor
 
-## 📄 Purpose
-Extracts text from a PDF using Google Cloud Vision OCR, based on predefined page ranges, and saves the text into Markdown files.
+1. **Install Dependencies**:
+   Ensure you have Python installed and install required libraries using:
 
----
+   ```bash
+   pip install -r requirements.txt
+   OR
+   you can manully install the required libraries by running the following commands:
+   pip install PyPDF2
+   pip install google-cloud-vision
+   ```
 
-## 🗂 Folder Setup
-- **UPLOAD_FOLDER**: Location of the PDF file.
-- **TEXT_FOLDER**: Where extracted text (Markdown files) is saved.
-- **IMAGES_FOLDER**: Where PDF pages are saved as images.
-- Creates the folders if they don't exist.
+2. **Set Google Cloud Credentials**:
+   Export your Google Cloud Vision API credentials:
 
----
+   ```bash
+   export GOOGLE_APPLICATION_CREDENTIALS="path/to/your/credentials.json"
+   ```
 
-## 🔐 Authentication
-Sets Google Cloud credentials using the environment variable `GOOGLE_APPLICATION_CREDENTIALS`.
+   After setting the environment variable, the credentials can be accessed in the `pdf_text_extractor.py` file.
+   you can mention the file path manully in your envoironment variable like this GOOGLE_APPLICATION_CREDENTIALS="path/to/your/credentials.json"
+   and after that you can access it in pdf_text_extractor.py file.
 
----
+   ```
 
-## 🔍 Function: `detect_text(path, output_file)`
-- Reads an image file.
-- Sends it to **Google Cloud Vision** for text detection.
-- Appends the detected text to the specified `.md` file.
-- Logs the number of annotations and handles API errors.
+   ```
 
----
+3. **Prepare Folders**:
+   Create the necessary folders (`UPLOAD_FOLDER`, `TEXT_FOLDER`, `IMAGES_FOLDER`) or ensure they exist.
+   UPLOAD_FOLDER:
 
-## 🖼️ Function: `pdf_to_images(pdf_path, image_folder)`
-- Opens the PDF using `PyMuPDF (fitz)`.
-- Defines specific page ranges and corresponding Markdown output files.
-- Clears any existing content in output files.
-- Converts each page into a 300 DPI image.
-- Saves images to disk.
-- Determines which page range the image belongs to.
-- Calls `detect_text()` to process and store text.
+    This folder is likely used to store the uploaded PDF files temporarily before processing.
+    It acts as a staging area for input files.
+    TEXT_FOLDER:
 
----
+    This folder is used to store the extracted text from the PDF files.
+    Each processed PDF might generate a corresponding text file saved here.
+    IMAGES_FOLDER:
 
-## 🏃 Main Execution
-- Sets the PDF file path.
-- Verifies file existence.
-- Calls `pdf_to_images()` to start processing.
+    This folder is used to store images extracted from the PDF pages.
+    If the script processes PDFs to extract images (e.g., for OCR or other purposes), those images will be saved here.
 
----
+4. **Run the Script**:
+   Execute the script with the following command:
 
-## ✅ Output
-- Extracted text organized into Markdown files by page ranges.
-- Images of PDF pages saved for reference or reuse.
+   ```bash
+   python pdf_extractor.py --pdf <path_to_pdf> --ranges <page_ranges>
+   ```
+
+   Replace `<path_to_pdf>` with the path to your PDF file and `<page_ranges>` with the desired page ranges (e.g., `1-5,7-10`).
+
+5. **Check Output**:
+   - Extracted text will be saved in the `TEXT_FOLDER`.
+   - Images of PDF pages will be saved in the `IMAGES_FOLDER`.
