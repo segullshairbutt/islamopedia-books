@@ -72,9 +72,9 @@ def process_images_for_text(image_paths, text_files_folder):
                 break
             
 if __name__ == "__main__":
-    upload_folder = os.getenv("UPLOAD_FOLDER", "uploads")
-    text_files_folder = os.getenv("TEXT_FILES_FOLDER", "text_files")
-    images_folder = os.getenv("IMAGES_FOLDER", "images")
+    upload_folder = os.getenv("UPLOAD_FOLDER")
+    text_files_folder = os.getenv("TEXT_FILES_FOLDER")
+    images_folder = os.getenv("IMAGES_FOLDER")
 
     os.makedirs(images_folder, exist_ok=True)
     credentials_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')

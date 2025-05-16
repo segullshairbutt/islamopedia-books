@@ -1,29 +1,21 @@
-# Python
-__pycache__/
-*.py[cod]
-*.egg
-*.egg-info/
-dist/
-build/
-.eggs/
-*.log
-
-# Virtualenv
-env/
-venv/
-.venv/
-
-# macOS
-.DS_Store
-
-# VSCode
+# Editor directories and files
 .vscode/
 
-# Credentials & Environment
-.env
-*.json
+# Build directories
+**/_build
 
-# Project folders that should be recreated
-uploads/
-images/
-text_file_folder/
+# Environment files
+.env
+
+# macOS system files
+.DS_Store
+
+# Virtual Environment directories
+.env
+.env.bak/
+.venv/
+ENV/
+env/
+env.bak/
+venv/
+venv.bak/

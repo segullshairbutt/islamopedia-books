@@ -1,29 +1,21 @@
-# Use an official Python runtime as a parent image
 FROM python:3.12.7-slim-bullseye
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Install Poetry
-RUN pip install poetry==2.0.0
+# Install system dependencies required by PyMuPDF/fitz
+RUN apt-get update && apt-get install -y libglib2.0-0 libxrender1 libsm6 libxext6 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Copy the poetry.lock and pyproject.toml files
-COPY pyproject.toml poetry.lock /app/
+# Copy requirements file
+COPY scripts/text_extractor_from_images/requirments.txt .
 
-# Do not create a virtualenv
-RUN poetry config virtualenvs.create false
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirments.txt
 
-# Install the dependencies
-RUN poetry install
+# Prepare necessary folders
+RUN mkdir -p uploads text_files images
 
-# Copy the rest of the application code to the container
-COPY . /app/
+# Copy your project files into the container
+COPY . .
 
-# Set environment variables for Google Cloud credentials and other paths
-ENV GOOGLE_APPLICATION_CREDENTIALS="segulshairbutt-google-fusion-ai.json"
-ENV UPLOAD_FOLDER="/app/uploads"
-ENV TEXT_FOLDER="/app/extracted_text"
-ENV IMAGES_FOLDER="/app/extracted_images"
-ENV PDF_FILENAME="Tarikh Ibn e Kaseer 3.pdf"
-
-# Co
+CMD ["python3", "scripts/text_extractor_from_images/pdf_text_extractor.py"]
