@@ -1,0 +1,2 @@
+google-cloud-vision==3.10.1
+PyMuPDF==1.25.4
