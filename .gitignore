@@ -1,15 +1,9 @@
 # Editor directories and files
 .vscode/
-
 # Build directories
 **/_build
-
-# Environment files
-.env
-
 # macOS system files
 .DS_Store
-
 # Virtual Environment directories
 .env
 .env.bak/
