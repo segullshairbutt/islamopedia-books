@@ -1,4 +1,4 @@
-<center><strong>عرضِ ناشر</strong>
+<p align="center"><strong>عرضِ ناشر</strong></p>
 
 
 
