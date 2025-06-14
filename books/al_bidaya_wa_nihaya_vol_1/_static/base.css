@@ -40,3 +40,11 @@ p {
 .prev-next-area a.left-prev {
     float: right !important;
 }
+@import url('./_static/font-face.css');
+
+body {
+  font-family: 'Jameel Noori Nastaleeq', serif;
+  font-size: 24px; /* آپ چاہیں تو 26px یا 28px بھی کر سکتے ہیں */
+  line-height: 1.8;
+  background-color: #fff;
+  color: #000;
