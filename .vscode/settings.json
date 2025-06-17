@@ -1,0 +1,16 @@
+{
+    "python.defaultInterpreterPath": "",
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": "\\.md|.yml|.css$",
+                "cmd": "make build_book_via_docker"
+            }
+        ]
+    },
+    "[markdown]": {
+        "editor.fontFamily": "Noto Nastaliq Urdu",
+        "editor.fontSize": 12,
+        "editor.lineHeight": 3,
+    }
+}
