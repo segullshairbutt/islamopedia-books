@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Generate Audio</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body>
+    <h1>Generate Audio</h1>
+    <form method="post">
+      <!-- Add your form fields here -->
+      <textarea
+        name="input_text"
+        rows="5"
+        cols="40"
+        placeholder="Enter text to generate audio..."
+      ></textarea
+      ><br />
+      <button type="submit">Generate</button>
+    </form>
+    <!-- Add more content as needed -->
+  </body>
+</html>
