@@ -7,20 +7,250 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='styles.css') }}"
     />
+    <style>
+      .playground-container {
+        max-width: 600px;
+        margin: 2rem auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+        padding: 2rem;
+      }
+      .playground-container h1 {
+        margin-top: 0;
+      }
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+      label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      select,
+      textarea,
+      input[type="number"],
+      input[type="file"] {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+      }
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+      .instructions {
+        background: #f1f1f1;
+        border-left: 4px solid #2c3e50;
+        padding: 1rem;
+        margin-bottom: 2rem;
+        border-radius: 4px;
+        font-size: 0.95rem;
+      }
+      button {
+        background: #2c3e50;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #1a242f;
+      }
+      .audio-result {
+        margin-top: 2rem;
+        text-align: center;
+      }
+    </style>
   </head>
   <body>
-    <h1>Generate Audio</h1>
-    <form method="post">
-      <!-- Add your form fields here -->
-      <textarea
-        name="input_text"
-        rows="5"
-        cols="40"
-        placeholder="Enter text to generate audio..."
-      ></textarea
-      ><br />
-      <button type="submit">Generate</button>
-    </form>
-    <!-- Add more content as needed -->
+    <div class="playground-container">
+      <h1>OpenAI Speech Playground</h1>
+      <div class="instructions">
+        <strong>Instructions:</strong>
+        <ul>
+          <li>Paste or type your text below <b>or</b> upload a text file.</li>
+          <li>Select a model and voice.</li>
+          <li>Adjust the speed (1.0 is normal speed).</li>
+          <li>Optionally, provide custom instructions for the model.</li>
+          <li>
+            Click "Generate Audio" to synthesize speech using OpenAI's TTS API.
+          </li>
+          <li>
+            If you upload a file, you will get a zip of audio chunks. If you
+            paste text, you will get inline audio playback.
+          </li>
+        </ul>
+      </div>
+      <div
+        class="instructions"
+        style="background: #eaf6ff; border-left: 4px solid #0074d9"
+      >
+        <strong>Pricing (as of June 2024):</strong>
+        <ul style="margin-bottom: 0">
+          <li><b>tts-1</b>: $0.015 / 1K characters</li>
+          <li><b>tts-1-hd</b>: $0.030 / 1K characters</li>
+          <li><b>gpt-4o-mini-tts</b>: $0.015 / 1K characters</li>
+        </ul>
+        <span style="font-size: 0.95em; color: #555"
+          >See
+          <a href="https://platform.openai.com/docs/models#tts" target="_blank"
+            >OpenAI Model Pricing</a
+          >
+          for details.</span
+        >
+      </div>
+      <form id="audio-form" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="model">Model</label>
+          <select name="model" id="model" required>
+            <option value="gpt-4o-mini-tts">gpt-4o-mini-tts</option>
+            <option value="tts-1">tts-1</option>
+            <option value="tts-1-hd">tts-1-hd</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="voice">Voice</label>
+          <select name="voice" id="voice" required>
+            <option value="alloy">Alloy</option>
+            <option value="ash">Ash</option>
+            <option value="ballad">Ballad</option>
+            <option value="coral">Coral</option>
+            <option value="echo">Echo</option>
+            <option value="fable">Fable</option>
+            <option value="nova">Nova</option>
+            <option value="onyx">Onyx</option>
+            <option value="sage">Sage</option>
+            <option value="shimmer">Shimmer</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="speed">Speed (0.25 - 4.0)</label>
+          <input
+            type="number"
+            step="0.25"
+            min="0.25"
+            max="4.0"
+            name="speed"
+            id="speed"
+            value="1.0"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="instructions">Instructions</label>
+          <textarea name="instructions" id="instructions" required>
+Speak like you are reading a book for me. I am using markdown text, so take care of proper stops when going to next line, paragraph or headings. Don't call out the special characters used to indicate the format of the text.</textarea
+          >
+        </div>
+        <div class="form-group">
+          <label for="input_text">Text</label>
+          <textarea
+            name="input_text"
+            id="input_text"
+            placeholder="Paste your text here..."
+          ></textarea>
+        </div>
+        <div class="form-group">
+          <label for="text_file">Or upload a text file</label>
+          <input type="file" name="text_file" id="text_file" accept=".txt" />
+        </div>
+        <button type="submit">Generate Audio</button>
+        <div id="progress-container" style="display: none">
+          <p id="progress-text">Progress: 0%</p>
+          <progress id="progress-bar" value="0" max="100"></progress>
+        </div>
+      </form>
+      <div class="audio-result" id="audio-result" style="display: none">
+        <h3>Result</h3>
+        <audio id="audio-player" controls style="display: none"></audio>
+        <a
+          id="download-link"
+          href="#"
+          download="audio_chunks.zip"
+          style="display: none"
+          >Download Audio Zip</a
+        >
+      </div>
+    </div>
+    <script>
+      const form = document.getElementById("audio-form");
+      const audioResult = document.getElementById("audio-result");
+      const audioPlayer = document.getElementById("audio-player");
+      const downloadLink = document.getElementById("download-link");
+      const progressContainer = document.getElementById("progress-container");
+      const progressText = document.getElementById("progress-text");
+      const progressBar = document.getElementById("progress-bar");
+
+      let currentFileType = null;
+      let progressId = null;
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        audioResult.style.display = "none";
+        audioPlayer.style.display = "none";
+        downloadLink.style.display = "none";
+        progressContainer.style.display = "";
+        progressBar.value = 0;
+        progressText.textContent = "Progress: 0%";
+        const formData = new FormData(form);
+        fetch("/generate-audio", {
+          method: "POST",
+          body: formData,
+        }).then(async (resp) => {
+          const data = await resp.json();
+          if (!resp.ok) {
+            alert(data.error || "Failed to generate audio.");
+            progressContainer.style.display = "none";
+            return;
+          }
+          progressId = data.progress_id;
+          currentFileType = data.file_type;
+          pollAudioProgress();
+        });
+      });
+
+      function pollAudioProgress() {
+        fetch(`/generate-audio-progress/${progressId}`)
+          .then((resp) => resp.json())
+          .then((data) => {
+            if (data.status === "done") {
+              progressBar.value = 100;
+              progressText.textContent = "Progress: 100%";
+              progressContainer.style.display = "none";
+              showAudioResult();
+            } else if (data.status === "processing") {
+              let percent = Math.floor((data.current / data.total) * 100);
+              progressBar.value = percent;
+              progressText.textContent = `Progress: ${percent}% (${data.current}/${data.total})`;
+              setTimeout(pollAudioProgress, 1000);
+            } else {
+              progressText.textContent =
+                "Error: " + (data.error || "Unknown error");
+              progressContainer.style.display = "none";
+            }
+          });
+      }
+
+      function showAudioResult() {
+        fetch(`/generate-audio-download/${progressId}`).then(async (resp) => {
+          const contentType = resp.headers.get("Content-Type");
+          const blob = await resp.blob();
+          const url = URL.createObjectURL(blob);
+          audioResult.style.display = "";
+          if (contentType && contentType.includes("audio/mpeg")) {
+            audioPlayer.src = url;
+            audioPlayer.style.display = "";
+          } else if (contentType && contentType.includes("application/zip")) {
+            downloadLink.href = url;
+            downloadLink.style.display = "";
+          }
+        });
+      }
+    </script>
   </body>
 </html>

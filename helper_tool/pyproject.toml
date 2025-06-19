@@ -6,6 +6,8 @@ dependencies = [
     "flask",
     "google-cloud-vision",
     "PyMuPDF",
+    "openai",
+    "tiktoken",
 ]
 
 [project.optional-dependencies]
