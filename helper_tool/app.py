@@ -82,6 +82,11 @@ def background_generate_audio(
         audio_progress_data[progress_id] = {"status": "error", "error": str(e)}
 
 
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+
 @app.route("/extract-text", methods=["GET", "POST"])
 def extract_text():
     if request.method == "POST":

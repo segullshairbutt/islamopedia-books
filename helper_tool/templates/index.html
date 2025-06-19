@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Helper Tool - Home</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <style>
+      .main-links {
+        max-width: 500px;
+        margin: 4rem auto;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+        padding: 2rem;
+        text-align: center;
+      }
+      .main-links h1 {
+        margin-bottom: 2rem;
+      }
+      .main-links a {
+        display: block;
+        margin: 1.5rem 0;
+        font-size: 1.2rem;
+        color: #2c3e50;
+        text-decoration: none;
+        border: 1px solid #2c3e50;
+        border-radius: 4px;
+        padding: 1rem;
+        transition: background 0.2s, color 0.2s;
+      }
+      .main-links a:hover {
+        background: #2c3e50;
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main-links">
+      <h1>Helper Tool</h1>
+      <a href="{{ url_for('extract_text') }}">Extract Text from PDF</a>
+      <a href="{{ url_for('combine_texts') }}">Combine Text Files</a>
+      <a href="{{ url_for('generate_audio') }}"
+        >Generate Audio (TTS Playground)</a
+      >
+    </div>
+  </body>
+</html>
