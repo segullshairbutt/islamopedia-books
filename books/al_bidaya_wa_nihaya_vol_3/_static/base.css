@@ -14,8 +14,10 @@ h2,
 h3,
 h4,
 h5,
-h6 {
+body, p, h1, h2, h3, h4, h5, h6, div, span {
   font-family: "Jameel Noori Nastaleeq", system-ui, Arial, sans-serif;
+}
+
 }
 
 /* Apply to all text in the book */
