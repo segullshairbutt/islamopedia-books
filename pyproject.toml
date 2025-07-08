@@ -7,7 +7,7 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.9"
-jupyter-book = "^1.0.2"
+jupyter-book = "^1.0.4.post1"
 pyppeteer = "^2.0.0"
 
 [tool.poetry.dev-dependencies]
