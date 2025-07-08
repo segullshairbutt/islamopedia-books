@@ -10,7 +10,7 @@
     },
     "[markdown]": {
         "editor.fontFamily": "Jameel Noori Nastaleeq",
-        "editor.fontSize": 20,
+        "editor.fontSize": 35,
         "editor.lineHeight": 2
     },
     "vscode_custom_css_silent.imports": [
