@@ -1,0 +1,21 @@
+{
+    "python.defaultInterpreterPath": "",
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": "\\.md|.yml|.css$",
+                "cmd": "make build_book_via_docker"
+            }
+        ]
+    },
+    "[markdown]": {
+        "editor.fontFamily": "Jameel Noori Nastaleeq",
+        "editor.fontSize": 20,
+        "editor.lineHeight": 2
+    },
+    "vscode_custom_css_silent.imports": [
+        "file:///c%3A/Users/Muhammad%20Numan/.vscode/extensions/alirezakay.rtltextdocuments-0.1.4/assets/cascadia.css",
+        "file:///c%3A/Users/Muhammad%20Numan/.vscode/extensions/alirezakay.rtltextdocuments-0.1.4/assets/rtl.css",
+        "file:///c%3A/Users/Muhammad%20Numan/.vscode/extensions/alirezakay.rtltextdocuments-0.1.4/assets/rtl.js"
+    ]
+}
