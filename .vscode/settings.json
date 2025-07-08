@@ -9,7 +9,7 @@
         ]
     },
     "[markdown]": {
-        "editor.fontFamily": "Jameel Noori Nastaleeq",
+        "editor.fontFamily": "Noto Nastaliq Urdu",
         "editor.fontSize": 42,
         "editor.lineHeight": 2
     }
