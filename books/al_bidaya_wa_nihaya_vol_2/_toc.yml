@@ -1,0 +1,14 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: content/chap_1
+chapters:
+- file: content/chap_2
+- file: content/chap_3
+- file: content/chap_4
+- file: content/chap_5
+- file: content/chap_6
+- file: content/chap_7
+- file: content/chap_8
+- file: content/chap_9
