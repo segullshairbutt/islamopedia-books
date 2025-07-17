@@ -11,5 +11,8 @@ pip-wheel-metadata/
 .idea/
 .vscode/
 
+# Environment variables
+.env
+
 # uv
 .uv/

@@ -3,6 +3,7 @@ import tempfile
 import threading
 import uuid
 
+from dotenv import load_dotenv
 from flask import (
     Flask,
     jsonify,
@@ -11,6 +12,9 @@ from flask import (
     send_file,
     send_from_directory,
 )
+
+# Load environment variables from .env file
+load_dotenv()
 
 from services.pdf_text_extractor import extract_pdf_text_to_zipfile
 
@@ -265,4 +269,5 @@ def forbidden(e):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    debug_mode = os.getenv("FLASK_DEBUG", "False").lower() == "true"
+    app.run(debug=debug_mode)

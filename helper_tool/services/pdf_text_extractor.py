@@ -4,7 +4,16 @@ import tempfile
 import zipfile
 
 import pymupdf
+from dotenv import load_dotenv
 from google.cloud import vision
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Set Google Cloud credentials from environment variable if provided
+google_credentials_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+if google_credentials_path:
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = google_credentials_path
 
 
 def detect_text(image_path):
@@ -131,16 +140,6 @@ if __name__ == "__main__":
         default="output_images",
         help="Folder to save images.",
     )
-    args = parser.parse_args()
-
-    if not os.path.exists(args.pdf_path):
-        print(f"PDF file not found: {args.pdf_path}")
-    else:
-        print("Extracting text from PDF...")
-        extract_pdf_text(args.pdf_path, args.output_folder, args.images_folder)
-        default = ("output_images",)
-        help = ("Folder to save images.",)
-
     args = parser.parse_args()
 
     if not os.path.exists(args.pdf_path):
