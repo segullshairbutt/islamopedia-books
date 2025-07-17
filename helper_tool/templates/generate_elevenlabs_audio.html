@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElevenLabs Audio Generation</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎙️ ElevenLabs Audio Generation</h1>
+            <p>Convert text to high-quality speech using ElevenLabs AI voices</p>
+            
+            <!-- Credits Information -->
+            {% if credits_info and credits_info.success %}
+            <div class="credits-info" id="credits-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3>💳 Credits Information</h3>
+                    <button type="button" class="btn btn-sm" onclick="refreshCredits()">🔄 Refresh</button>
+                </div>
+                <div class="credits-details" id="credits-details">
+                    <div class="credit-item">
+                        <span class="credit-label">Characters Used:</span>
+                        <span class="credit-value">{{ "{:,}".format(credits_info.credits.character_count) }}</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="credit-label">Characters Limit:</span>
+                        <span class="credit-value">{{ "{:,}".format(credits_info.credits.character_limit) }}</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="credit-label">Characters Remaining:</span>
+                        <span class="credit-value credit-remaining">{{ "{:,}".format(credits_info.credits.characters_remaining) }}</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="credit-label">Subscription Tier:</span>
+                        <span class="credit-value">{{ credits_info.credits.tier|title }}</span>
+                    </div>
+                </div>
+                <div class="credits-progress">
+                    <div class="credits-progress-bar">
+                        <div class="credits-progress-fill" id="credits-progress-fill" style="width: {{ (credits_info.credits.character_count / credits_info.credits.character_limit * 100)|round(1) }}%"></div>
+                    </div>
+                    <small id="credits-percentage">{{ (credits_info.credits.character_count / credits_info.credits.character_limit * 100)|round(1) }}% used</small>
+                </div>
+            </div>
+            {% else %}
+            <div class="credits-info">
+                <h3>💳 Credits Information</h3>
+                <div class="credits-notice">
+                    <p>💡 <strong>Tip:</strong> Monitor your ElevenLabs credits usage by checking your <a href="https://elevenlabs.io/app/speech-synthesis" target="_blank">ElevenLabs Dashboard</a></p>
+                    <p>This API key doesn't have permission to read user account information, but you can still generate audio!</p>
+                </div>
+            </div>
+            {% endif %}
+            
+            <nav>
+                <a href="{{ url_for('index') }}">← Back to Home</a>
+            </nav>
+        </header>
+
+        <main>
+            <form id="audioForm" method="POST" enctype="multipart/form-data">
+                <div class="form-section">
+                    <h3>📝 Input Method</h3>
+                    <div class="input-tabs">
+                        <label class="tab-label">
+                            <input type="radio" name="input_type" value="text" checked>
+                            Direct Text Input
+                        </label>
+                        <label class="tab-label">
+                            <input type="radio" name="input_type" value="file">
+                            Upload Text File
+                        </label>
+                    </div>
+
+                    <div id="text-input" class="input-content">
+                        <label for="input_text">Enter Text:</label>
+                        <textarea name="input_text" id="input_text" rows="8" placeholder="Enter the text you want to convert to speech..."></textarea>
+                    </div>
+
+                    <div id="file-input" class="input-content" style="display: none;">
+                        <label for="text_file">Upload Text File:</label>
+                        <input type="file" name="text_file" id="text_file" accept=".txt,.md">
+                        <small>Supported formats: .txt, .md</small>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>🎭 Voice Settings</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="voice_id">Voice:</label>
+                            <select name="voice_id" id="voice_id" required>
+                                <option value="">Select a voice...</option>
+                                {% for voice in voices %}
+                                <option value="{{ voice.voice_id }}">{{ voice.name }} ({{ voice.category }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="model">Model:</label>
+                            <select name="model" id="model">
+                                <option value="">🤖 Auto-select Best Model (Recommended)</option>
+                                {% if models and models|length > 0 %}
+                                    {% for model in models %}
+                                        <option value="{{ model.model_id }}" 
+                                                {% if model.get('requires_alpha_access') %}data-alpha="true"{% endif %}>
+                                            {{ model.name }}
+                                            {% if model.description %} - {{ model.description }}{% endif %}
+                                            {% if model.get('requires_alpha_access') %} ⭐{% endif %}
+                                        </option>
+                                    {% endfor %}
+                                {% else %}
+                                    <option value="" disabled>⚠️ Unable to fetch models from API</option>
+                                {% endif %}
+                            </select>
+                            <small>
+                                💡 <strong>Auto-select will choose the best available model for Urdu</strong><br>
+                                ⭐ = Alpha/Beta models (may require special access)<br>
+                                ℹ️ System automatically falls back to stable models if newer ones fail
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="stability">Stability ({{ stability|default(0.5) }}):</label>
+                            <input type="range" name="stability" id="stability" min="0" max="1" step="0.1" value="{{ stability|default(0.5) }}">
+                            <small>Lower = more variable, Higher = more stable</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="similarity_boost">Similarity Boost ({{ similarity_boost|default(0.8) }}):</label>
+                            <input type="range" name="similarity_boost" id="similarity_boost" min="0" max="1" step="0.1" value="{{ similarity_boost|default(0.8) }}">
+                            <small>Lower = more creative, Higher = more similar to original voice</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <button type="submit" class="btn btn-primary">🎵 Generate Audio</button>
+                </div>
+            </form>
+
+            <!-- Progress Section -->
+            <div id="progress-section" style="display: none;">
+                <h3>🔄 Generation Progress</h3>
+                <div class="progress-bar">
+                    <div id="progress-fill"></div>
+                </div>
+                <p id="progress-text">Initializing...</p>
+                
+                <!-- Audio Player and Download Section -->
+                <div id="download-section" style="display: none;">
+                    <div id="audio-player-section" style="display: none; margin-bottom: 1rem;">
+                        <h4>🎵 Play Audio</h4>
+                        <audio id="audio-player" controls style="width: 100%; margin-bottom: 1rem;">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                    
+                    <div class="download-buttons">
+                        <a id="download-link" class="btn btn-success" style="margin-right: 1rem;">📥 Download</a>
+                        <button id="play-button" class="btn btn-primary" style="display: none;">🎵 Load Audio Player</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('input[name="input_type"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.getElementById('text-input').style.display = 
+                    this.value === 'text' ? 'block' : 'none';
+                document.getElementById('file-input').style.display = 
+                    this.value === 'file' ? 'block' : 'none';
+            });
+        });
+
+        // Range slider value display
+        document.getElementById('stability').addEventListener('input', function() {
+            this.previousElementSibling.textContent = `Stability (${this.value}):`;
+        });
+
+        document.getElementById('similarity_boost').addEventListener('input', function() {
+            this.previousElementSibling.textContent = `Similarity Boost (${this.value}):`;
+        });
+
+        // Form submission and progress tracking
+        document.getElementById('audioForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            // Show progress section
+            document.getElementById('progress-section').style.display = 'block';
+            document.getElementById('download-section').style.display = 'none';
+            
+            fetch('{{ url_for("generate_elevenlabs_audio") }}', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    document.getElementById('progress-section').style.display = 'none';
+                    return;
+                }
+                
+                // Start polling for progress
+                pollProgress(data.progress_id, data.file_type);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred: ' + error.message);
+                document.getElementById('progress-section').style.display = 'none';
+            });
+        });
+
+        function pollProgress(progressId, fileType) {
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+            const downloadSection = document.getElementById('download-section');
+            const downloadLink = document.getElementById('download-link');
+            const playButton = document.getElementById('play-button');
+            const audioPlayerSection = document.getElementById('audio-player-section');
+            const audioPlayer = document.getElementById('audio-player');
+
+            function checkProgress() {
+                fetch(`{{ url_for("generate_elevenlabs_audio_progress", progress_id="PLACEHOLDER") }}`.replace('PLACEHOLDER', progressId))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        progressText.textContent = 'Error: ' + data.error;
+                        return;
+                    }
+
+                    const percentage = Math.round((data.current / data.total) * 100);
+                    progressFill.style.width = percentage + '%';
+
+                    if (data.status === 'processing') {
+                        progressText.textContent = `Processing ${data.current}/${data.total} chunks... (${percentage}%)`;
+                        setTimeout(checkProgress, 1000);
+                    } else if (data.status === 'done') {
+                        progressText.textContent = '✅ Generation completed!';
+                        
+                        // Set up download link
+                        downloadLink.href = `{{ url_for("generate_elevenlabs_audio_download", progress_id="PLACEHOLDER") }}`.replace('PLACEHOLDER', progressId);
+                        
+                        if (fileType === 'zip') {
+                            downloadLink.textContent = '📥 Download Audio Chunks (ZIP)';
+                            playButton.style.display = 'none';
+                        } else if (fileType === 'mp3') {
+                            downloadLink.textContent = '📥 Download Audio (MP3)';
+                            playButton.style.display = 'inline-block';
+                            
+                            // Set up play button
+                            playButton.onclick = function() {
+                                const playUrl = `{{ url_for("generate_elevenlabs_audio_play", progress_id="PLACEHOLDER") }}`.replace('PLACEHOLDER', progressId);
+                                audioPlayer.src = playUrl;
+                                audioPlayerSection.style.display = 'block';
+                                audioPlayer.load();
+                            };
+                        }
+                        
+                        downloadSection.style.display = 'block';
+                    } else if (data.status === 'error') {
+                        progressText.textContent = '❌ Error: ' + (data.error || 'Unknown error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Progress check error:', error);
+                    progressText.textContent = '❌ Error checking progress';
+                });
+            }
+
+            checkProgress();
+        }
+
+        // Function to refresh credits
+        function refreshCredits() {
+            fetch('{{ url_for("get_elevenlabs_credits") }}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const credits = data.credits;
+                    const percentage = Math.round((credits.character_count / credits.character_limit) * 100 * 10) / 10;
+                    
+                    // Update the credits display
+                    const creditsDetails = document.getElementById('credits-details');
+                    if (creditsDetails) {
+                        creditsDetails.innerHTML = `
+                            <div class="credit-item">
+                                <span class="credit-label">Characters Used:</span>
+                                <span class="credit-value">${credits.character_count.toLocaleString()}</span>
+                            </div>
+                            <div class="credit-item">
+                                <span class="credit-label">Characters Limit:</span>
+                                <span class="credit-value">${credits.character_limit.toLocaleString()}</span>
+                            </div>
+                            <div class="credit-item">
+                                <span class="credit-label">Characters Remaining:</span>
+                                <span class="credit-value credit-remaining">${credits.characters_remaining.toLocaleString()}</span>
+                            </div>
+                            <div class="credit-item">
+                                <span class="credit-label">Subscription Tier:</span>
+                                <span class="credit-value">${credits.tier.charAt(0).toUpperCase() + credits.tier.slice(1)}</span>
+                            </div>
+                        `;
+                    }
+                    
+                    // Update progress bar
+                    const progressFill = document.getElementById('credits-progress-fill');
+                    const progressText = document.getElementById('credits-percentage');
+                    if (progressFill) progressFill.style.width = percentage + '%';
+                    if (progressText) progressText.textContent = percentage + '% used';
+                    
+                } else {
+                    alert('Error refreshing credits: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error refreshing credits:', error);
+                alert('Error refreshing credits');
+            });
+        }
+    </script>
+</body>
+</html>

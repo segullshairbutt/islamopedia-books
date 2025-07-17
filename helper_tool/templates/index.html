@@ -43,7 +43,10 @@
       <a href="{{ url_for('extract_text') }}">Extract Text from PDF</a>
       <a href="{{ url_for('combine_texts') }}">Combine Text Files</a>
       <a href="{{ url_for('generate_audio') }}"
-        >Generate Audio (TTS Playground)</a
+        >Generate Audio (OpenAI TTS)</a
+      >
+      <a href="{{ url_for('generate_elevenlabs_audio') }}"
+        >Generate Audio (ElevenLabs TTS)</a
       >
     </div>
   </body>

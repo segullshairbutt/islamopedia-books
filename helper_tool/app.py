@@ -17,73 +17,14 @@ from flask import (
 load_dotenv()
 
 from services.pdf_text_extractor import extract_pdf_text_to_zipfile
+from services.generate_audio_service import background_generate_audio
+from services.generate_11_lab_audio import background_generate_elevenlabs_audio, get_available_voices, get_available_models, get_user_credits
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 
 
 # In-memory progress store for audio generation
 audio_progress_data = {}
-
-
-def background_generate_audio(
-    progress_id, text, model, voice, speed, instructions, is_file
-):
-    from services.generate_audio_service import (
-        generate_openai_tts,
-        generate_single_openai_tts,
-    )
-
-    try:
-        if is_file:
-            # For file: zip of chunks
-            def progress_callback(current, total):
-                audio_progress_data[progress_id] = {
-                    "current": current,
-                    "total": total,
-                    "status": "processing",
-                }
-
-            zip_path = generate_openai_tts(
-                text,
-                model,
-                voice,
-                speed,
-                instructions,
-                progress_callback=progress_callback,
-            )
-            audio_progress_data[progress_id] = {
-                "current": audio_progress_data[progress_id]["total"],
-                "total": audio_progress_data[progress_id]["total"],
-                "status": "done",
-                "file_type": "zip",
-                "file_path": zip_path,
-            }
-        else:
-            # For text: single mp3
-            def progress_callback(current, total):
-                audio_progress_data[progress_id] = {
-                    "current": current,
-                    "total": total,
-                    "status": "processing",
-                }
-
-            mp3_path = generate_single_openai_tts(
-                text,
-                model,
-                voice,
-                speed,
-                instructions,
-                progress_callback=progress_callback,
-            )
-            audio_progress_data[progress_id] = {
-                "current": 1,
-                "total": 1,
-                "status": "done",
-                "file_type": "mp3",
-                "file_path": mp3_path,
-            }
-    except Exception as e:
-        audio_progress_data[progress_id] = {"status": "error", "error": str(e)}
 
 
 @app.route("/")
@@ -143,6 +84,7 @@ def generate_audio():
                     speed,
                     instructions,
                     True,
+                    audio_progress_data,
                 ),
             )
             thread.start()
@@ -150,7 +92,7 @@ def generate_audio():
         elif text and text.strip():
             thread = threading.Thread(
                 target=background_generate_audio,
-                args=(progress_id, text, model, voice, speed, instructions, False),
+                args=(progress_id, text, model, voice, speed, instructions, False, audio_progress_data),
             )
             thread.start()
             return jsonify({"progress_id": progress_id, "file_type": "mp3"})
@@ -189,6 +131,23 @@ def generate_audio_download(progress_id):
             download_name="audio_chunks.zip",
         )
     return jsonify({"error": "Unknown file type"}), 400
+
+
+@app.route("/generate-audio-play/<progress_id>")
+def generate_audio_play(progress_id):
+    """Serve OpenAI audio file for inline playback"""
+    data = audio_progress_data.get(progress_id)
+    if not data or data.get("status") != "done":
+        return jsonify({"error": "Not ready"}), 400
+    file_path = data.get("file_path")
+    file_type = data.get("file_type")
+    if file_type == "mp3":
+        return send_file(
+            file_path,
+            mimetype="audio/mpeg",
+            as_attachment=False,
+        )
+    return jsonify({"error": "Only MP3 files can be played inline"}), 400
 
 
 @app.route("/combine-texts", methods=["GET", "POST"])
@@ -263,6 +222,121 @@ def download_combined(download_id):
     )
 
 
+@app.route("/generate-11-labs-audio", methods=["GET", "POST"])
+def generate_elevenlabs_audio():
+    if request.method == "POST":
+        text = request.form.get("input_text")
+        voice_id = request.form.get("voice_id")
+        model = request.form.get("model")
+        # If no model specified, let the service auto-select the best one
+        if not model:
+            model = None
+        stability = float(request.form.get("stability", 0.5))
+        similarity_boost = float(request.form.get("similarity_boost", 0.8))
+        file = request.files.get("text_file")
+
+        if not voice_id:
+            return jsonify({"error": "Please select a voice."}), 400
+
+        progress_id = str(uuid.uuid4())
+        audio_progress_data[progress_id] = {
+            "current": 0,
+            "total": 1,
+            "status": "processing",
+        }
+
+        if file and file.filename != "":
+            file_content = file.read().decode("utf-8")
+            if not file_content.strip():
+                return jsonify({"error": "Uploaded file is empty."}), 400
+            thread = threading.Thread(
+                target=background_generate_elevenlabs_audio,
+                args=(
+                    progress_id,
+                    file_content,
+                    voice_id,
+                    model,
+                    stability,
+                    similarity_boost,
+                    True,
+                    audio_progress_data,
+                ),
+            )
+            thread.start()
+            return jsonify({"progress_id": progress_id, "file_type": "zip"})
+        elif text and text.strip():
+            thread = threading.Thread(
+                target=background_generate_elevenlabs_audio,
+                args=(progress_id, text, voice_id, model, stability, similarity_boost, False, audio_progress_data),
+            )
+            thread.start()
+            return jsonify({"progress_id": progress_id, "file_type": "mp3"})
+        else:
+            return jsonify({"error": "Please provide text or upload a file."}), 400
+    
+    # For GET request, fetch available voices, models, and credits, then render template
+    voices = get_available_voices()
+    models = get_available_models()
+    credits_info = get_user_credits()
+    return render_template("generate_elevenlabs_audio.html", voices=voices, models=models, credits_info=credits_info)
+
+
+@app.route("/generate-11-labs-audio-credits")
+def get_elevenlabs_credits():
+    """Get current ElevenLabs credits via AJAX"""
+    credits_info = get_user_credits()
+    return jsonify(credits_info)
+
+
+@app.route("/generate-11-labs-audio-progress/<progress_id>")
+def generate_elevenlabs_audio_progress(progress_id):
+    data = audio_progress_data.get(progress_id)
+    if not data:
+        return jsonify({"error": "Invalid progress ID"}), 404
+    return jsonify(data)
+
+
+@app.route("/generate-11-labs-audio-download/<progress_id>")
+def generate_elevenlabs_audio_download(progress_id):
+    data = audio_progress_data.get(progress_id)
+    if not data or data.get("status") != "done":
+        return jsonify({"error": "Not ready"}), 400
+    file_path = data.get("file_path")
+    file_type = data.get("file_type")
+    if file_type == "mp3":
+        return send_file(
+            file_path,
+            mimetype="audio/mpeg",
+            as_attachment=False,
+            download_name="elevenlabs_speech.mp3",
+        )
+    elif file_type == "zip":
+        return send_file(
+            file_path,
+            mimetype="application/zip",
+            as_attachment=True,
+            download_name="elevenlabs_audio_chunks.zip",
+        )
+    return jsonify({"error": "Unknown file type"}), 400
+
+
+@app.route("/generate-11-labs-audio-play/<progress_id>")
+def generate_elevenlabs_audio_play(progress_id):
+    """Serve audio file for inline playback"""
+    data = audio_progress_data.get(progress_id)
+    if not data or data.get("status") != "done":
+        return jsonify({"error": "Not ready"}), 400
+    file_path = data.get("file_path")
+    file_type = data.get("file_type")
+    if file_type == "mp3":
+        return send_file(
+            file_path,
+            mimetype="audio/mpeg",
+            as_attachment=False,
+        )
+    return jsonify({"error": "Only MP3 files can be played inline"}), 400
+
+
 @app.errorhandler(403)
 def forbidden(e):
     return jsonify({"error": "Forbidden", "message": str(e)}), 403
@@ -270,4 +344,4 @@ def forbidden(e):
 
 if __name__ == "__main__":
     debug_mode = os.getenv("FLASK_DEBUG", "False").lower() == "true"
-    app.run(debug=debug_mode)
+    app.run(host="0.0.0.0", port=5001, debug=debug_mode)

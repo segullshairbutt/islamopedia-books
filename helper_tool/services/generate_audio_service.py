@@ -95,3 +95,72 @@ def generate_single_openai_tts(
     if progress_callback:
         progress_callback(1, 1)
     return temp.name
+
+
+def background_generate_audio(
+    progress_id, text, model, voice, speed, instructions, is_file, audio_progress_data
+):
+    """
+    Background function to generate audio with progress tracking.
+    
+    Args:
+        progress_id: Unique identifier for tracking progress
+        text: Text content to convert to audio
+        model: OpenAI TTS model to use
+        voice: Voice to use for TTS
+        speed: Speech speed
+        instructions: Additional instructions for TTS
+        is_file: Boolean indicating if text comes from a file (affects output format)
+        audio_progress_data: Shared dictionary for storing progress data
+    """
+    try:
+        if is_file:
+            # For file: zip of chunks
+            def progress_callback(current, total):
+                audio_progress_data[progress_id] = {
+                    "current": current,
+                    "total": total,
+                    "status": "processing",
+                }
+
+            zip_path = generate_openai_tts(
+                text,
+                model,
+                voice,
+                speed,
+                instructions,
+                progress_callback=progress_callback,
+            )
+            audio_progress_data[progress_id] = {
+                "current": audio_progress_data[progress_id]["total"],
+                "total": audio_progress_data[progress_id]["total"],
+                "status": "done",
+                "file_type": "zip",
+                "file_path": zip_path,
+            }
+        else:
+            # For text: single mp3
+            def progress_callback(current, total):
+                audio_progress_data[progress_id] = {
+                    "current": current,
+                    "total": total,
+                    "status": "processing",
+                }
+
+            mp3_path = generate_single_openai_tts(
+                text,
+                model,
+                voice,
+                speed,
+                instructions,
+                progress_callback=progress_callback,
+            )
+            audio_progress_data[progress_id] = {
+                "current": 1,
+                "total": 1,
+                "status": "done",
+                "file_type": "mp3",
+                "file_path": mp3_path,
+            }
+    except Exception as e:
+        audio_progress_data[progress_id] = {"status": "error", "error": str(e)}

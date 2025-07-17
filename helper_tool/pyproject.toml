@@ -9,6 +9,8 @@ dependencies = [
     "openai",
     "tiktoken",
     "python-dotenv",
+    "elevenlabs",
+    "websockets>=15.0.1",
 ]
 
 [project.optional-dependencies]
