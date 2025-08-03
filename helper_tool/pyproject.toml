@@ -1,0 +1,28 @@
+[project]
+name = "helper-tool"
+version = "0.1.0"
+description = "A minimal Flask application for text extraction and audio generation."
+dependencies = [
+    "flask",
+    "google-cloud-vision",
+    "PyMuPDF",
+    "openai",
+    "tiktoken",
+    "python-dotenv",
+    "elevenlabs",
+    "websockets>=15.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.ruff.format]
+quote-style = "double"
