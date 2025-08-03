@@ -17,7 +17,7 @@ from flask import (
 load_dotenv()
 
 from services.pdf_text_extractor import extract_pdf_text_to_zipfile
-from services.generate_audio_service import background_generate_audio
+from services.generate_audio_service import background_generate_audio, get_openai_usage_info
 from services.generate_11_lab_audio import background_generate_elevenlabs_audio, get_available_voices, get_available_models, get_user_credits
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
@@ -98,7 +98,10 @@ def generate_audio():
             return jsonify({"progress_id": progress_id, "file_type": "mp3"})
         else:
             return jsonify({"error": "Please provide text or upload a file."}), 400
-    return render_template("generate_audio.html")
+    
+    # For GET request, fetch usage info and render template
+    usage_info = get_openai_usage_info()
+    return render_template("generate_audio.html", usage_info=usage_info)
 
 
 @app.route("/generate-audio-progress/<progress_id>")
@@ -106,6 +109,10 @@ def generate_audio_progress(progress_id):
     data = audio_progress_data.get(progress_id)
     if not data:
         return jsonify({"error": "Invalid progress ID"}), 404
+    
+    # Debug: Print the actual data structure
+    print(f"[DEBUG] Progress data for {progress_id}: {data}")
+    
     return jsonify(data)
 
 
@@ -148,6 +155,63 @@ def generate_audio_play(progress_id):
             as_attachment=False,
         )
     return jsonify({"error": "Only MP3 files can be played inline"}), 400
+
+
+@app.route("/generate-audio-chunk/<progress_id>/<int:chunk_index>")
+def generate_audio_chunk_play(progress_id, chunk_index):
+    """Serve individual OpenAI audio chunk for playback or download"""
+    data = audio_progress_data.get(progress_id)
+    if not data:
+        return jsonify({"error": "Invalid progress ID"}), 404
+    
+    chunks = data.get("chunks", [])
+    if chunk_index < 1 or chunk_index > len(chunks):
+        return jsonify({"error": "Invalid chunk index"}), 404
+    
+    chunk_info = chunks[chunk_index - 1]
+    chunk_path = chunk_info.get("path")
+    
+    if not chunk_path or not os.path.exists(chunk_path):
+        return jsonify({"error": "Chunk file not found"}), 404
+    
+    return send_file(
+        chunk_path,
+        mimetype="audio/mpeg",
+        as_attachment=False,
+        download_name=f"chunk_{chunk_index}.mp3",
+    )
+
+
+@app.route("/generate-audio-chunk-download/<progress_id>/<int:chunk_index>")
+def generate_audio_chunk_download(progress_id, chunk_index):
+    """Download individual OpenAI audio chunk"""
+    data = audio_progress_data.get(progress_id)
+    if not data:
+        return jsonify({"error": "Invalid progress ID"}), 404
+    
+    chunks = data.get("chunks", [])
+    if chunk_index < 1 or chunk_index > len(chunks):
+        return jsonify({"error": "Invalid chunk index"}), 404
+    
+    chunk_info = chunks[chunk_index - 1]
+    chunk_path = chunk_info.get("path")
+    
+    if not chunk_path or not os.path.exists(chunk_path):
+        return jsonify({"error": "Chunk file not found"}), 404
+    
+    return send_file(
+        chunk_path,
+        mimetype="audio/mpeg",
+        as_attachment=True,
+        download_name=f"openai_chunk_{chunk_index}.mp3",
+    )
+
+
+@app.route("/generate-audio-usage")
+def get_openai_usage():
+    """Get current OpenAI usage via AJAX"""
+    usage_info = get_openai_usage_info()
+    return jsonify(usage_info)
 
 
 @app.route("/combine-texts", methods=["GET", "POST"])
@@ -335,6 +399,56 @@ def generate_elevenlabs_audio_play(progress_id):
             as_attachment=False,
         )
     return jsonify({"error": "Only MP3 files can be played inline"}), 400
+
+
+@app.route("/generate-11-labs-audio-chunk/<progress_id>/<int:chunk_index>")
+def generate_elevenlabs_audio_chunk_play(progress_id, chunk_index):
+    """Serve individual ElevenLabs audio chunk for playback or download"""
+    data = audio_progress_data.get(progress_id)
+    if not data:
+        return jsonify({"error": "Invalid progress ID"}), 404
+    
+    chunks = data.get("chunks", [])
+    if chunk_index < 1 or chunk_index > len(chunks):
+        return jsonify({"error": "Invalid chunk index"}), 404
+    
+    chunk_info = chunks[chunk_index - 1]
+    chunk_path = chunk_info.get("path")
+    
+    if not chunk_path or not os.path.exists(chunk_path):
+        return jsonify({"error": "Chunk file not found"}), 404
+    
+    return send_file(
+        chunk_path,
+        mimetype="audio/mpeg",
+        as_attachment=False,
+        download_name=f"elevenlabs_chunk_{chunk_index}.mp3",
+    )
+
+
+@app.route("/generate-11-labs-audio-chunk-download/<progress_id>/<int:chunk_index>")
+def generate_elevenlabs_audio_chunk_download(progress_id, chunk_index):
+    """Download individual ElevenLabs audio chunk"""
+    data = audio_progress_data.get(progress_id)
+    if not data:
+        return jsonify({"error": "Invalid progress ID"}), 404
+    
+    chunks = data.get("chunks", [])
+    if chunk_index < 1 or chunk_index > len(chunks):
+        return jsonify({"error": "Invalid chunk index"}), 404
+    
+    chunk_info = chunks[chunk_index - 1]
+    chunk_path = chunk_info.get("path")
+    
+    if not chunk_path or not os.path.exists(chunk_path):
+        return jsonify({"error": "Chunk file not found"}), 404
+    
+    return send_file(
+        chunk_path,
+        mimetype="audio/mpeg",
+        as_attachment=True,
+        download_name=f"elevenlabs_chunk_{chunk_index}.mp3",
+    )
 
 
 @app.errorhandler(403)

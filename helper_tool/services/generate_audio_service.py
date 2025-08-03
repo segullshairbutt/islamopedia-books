@@ -12,6 +12,28 @@ load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
+def get_openai_usage_info():
+    """
+    Get OpenAI usage/billing information.
+    Note: This requires billing API access which may not be available for all accounts.
+    
+    Returns:
+        dict: Dictionary containing usage information or error
+    """
+    try:
+        # Note: OpenAI doesn't provide a direct usage API for all accounts
+        # This is a placeholder that returns helpful information
+        return {
+            "success": False,
+            "message": "OpenAI usage tracking requires billing API access",
+            "note": "Monitor your usage at https://platform.openai.com/usage",
+            "tip": "TTS costs approximately $15 per 1M characters"
+        }
+    except Exception as e:
+        print(f"Error fetching OpenAI usage: {e}")
+        return {"success": False, "error": str(e)}
+
+
 def split_text_by_tokens(text, max_tokens=1900, encoding_name="cl100k_base"):
     enc = tiktoken.get_encoding(encoding_name)
     tokens = enc.encode(text)
@@ -46,6 +68,8 @@ def generate_openai_tts(
     print(f"[TTS] Total splits/chunks to generate: {total}")
     temp_dir = tempfile.TemporaryDirectory()
     mp3_paths = []
+    permanent_chunk_paths = []
+    
     for idx, chunk in enumerate(chunks, start=1):
         print(f"[TTS] Generating chunk {idx}/{total} ...")
         response = openai.audio.speech.create(
@@ -60,9 +84,19 @@ def generate_openai_tts(
         with open(mp3_path, "wb") as f:
             f.write(response.content)
         mp3_paths.append(mp3_path)
+        
+        # Create permanent copy of chunk for individual access
+        permanent_chunk = tempfile.NamedTemporaryFile(delete=False, suffix=f"_chunk_{idx}.mp3")
+        with open(mp3_path, "rb") as src, open(permanent_chunk.name, "wb") as dst:
+            dst.write(src.read())
+        permanent_chunk_paths.append(permanent_chunk.name)
+        
         print(f"[TTS] Completed chunk {idx}/{total}: {mp3_path}")
+        print(f"[DEBUG] Permanent chunk created: {permanent_chunk.name}")
         if progress_callback:
-            progress_callback(idx, total)
+            print(f"[DEBUG] Calling progress callback with {len(permanent_chunk_paths)} chunks")
+            progress_callback(idx, total, permanent_chunk_paths)
+    
     zip_path = os.path.join(temp_dir.name, "audio_chunks.zip")
     with zipfile.ZipFile(zip_path, "w") as zipf:
         for mp3_path in mp3_paths:
@@ -73,7 +107,7 @@ def generate_openai_tts(
     with open(zip_path, "rb") as src, open(zip_file.name, "wb") as dst:
         dst.write(src.read())
     print(f"[TTS] All chunks completed. Zip created at: {zip_file.name}")
-    return zip_file.name
+    return zip_file.name, permanent_chunk_paths
 
 
 def generate_single_openai_tts(
@@ -116,14 +150,16 @@ def background_generate_audio(
     try:
         if is_file:
             # For file: zip of chunks
-            def progress_callback(current, total):
+            def progress_callback(current, total, chunk_paths):
+                print(f"[DEBUG] Progress callback called: current={current}, total={total}, chunks={len(chunk_paths)}")
                 audio_progress_data[progress_id] = {
                     "current": current,
                     "total": total,
                     "status": "processing",
+                    "chunks": [{"index": i+1, "path": path} for i, path in enumerate(chunk_paths)]
                 }
 
-            zip_path = generate_openai_tts(
+            zip_path, chunk_paths = generate_openai_tts(
                 text,
                 model,
                 voice,
@@ -131,12 +167,14 @@ def background_generate_audio(
                 instructions,
                 progress_callback=progress_callback,
             )
+            print(f"[DEBUG] Final chunk paths: {len(chunk_paths)} chunks")
             audio_progress_data[progress_id] = {
-                "current": audio_progress_data[progress_id]["total"],
-                "total": audio_progress_data[progress_id]["total"],
+                "current": len(chunk_paths),
+                "total": len(chunk_paths),
                 "status": "done",
                 "file_type": "zip",
                 "file_path": zip_path,
+                "chunks": [{"index": i+1, "path": path} for i, path in enumerate(chunk_paths)]
             }
         else:
             # For text: single mp3

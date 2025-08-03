@@ -421,7 +421,7 @@ async def generate_elevenlabs_audio_chunks_websocket(text, voice_id, model=None,
         progress_callback (function): Optional callback for progress updates
         
     Returns:
-        str: Path to zip file containing all audio chunks
+        tuple: (zip_path, permanent_chunk_paths)
     """
     # Auto-select best model if not specified
     if model is None:
@@ -432,6 +432,7 @@ async def generate_elevenlabs_audio_chunks_websocket(text, voice_id, model=None,
     
     temp_dir = tempfile.TemporaryDirectory()
     audio_paths = []
+    permanent_chunk_paths = []
     
     try:
         for idx, chunk in enumerate(chunks, start=1):
@@ -447,10 +448,16 @@ async def generate_elevenlabs_audio_chunks_websocket(text, voice_id, model=None,
             os.rename(audio_path, chunk_path)
             audio_paths.append(chunk_path)
             
+            # Create permanent copy of chunk for individual access
+            permanent_chunk = tempfile.NamedTemporaryFile(delete=False, suffix=f"_chunk_{idx}.mp3")
+            with open(chunk_path, "rb") as src, open(permanent_chunk.name, "wb") as dst:
+                dst.write(src.read())
+            permanent_chunk_paths.append(permanent_chunk.name)
+            
             print(f"[ElevenLabs WebSocket] Completed chunk {idx}/{total}: {chunk_path}")
             
             if progress_callback:
-                progress_callback(idx, total)
+                progress_callback(idx, total, permanent_chunk_paths)
         
         # Create zip file
         zip_path = os.path.join(temp_dir.name, "elevenlabs_audio_chunks.zip")
@@ -465,7 +472,7 @@ async def generate_elevenlabs_audio_chunks_websocket(text, voice_id, model=None,
             dst.write(src.read())
         
         print(f"[ElevenLabs WebSocket] All chunks completed. Zip created at: {zip_file.name}")
-        return zip_file.name
+        return zip_file.name, permanent_chunk_paths
         
     except Exception as e:
         raise Exception(f"ElevenLabs WebSocket chunk generation failed: {str(e)}")
@@ -505,6 +512,7 @@ def generate_elevenlabs_audio_chunks(text, voice_id, model=None, stability=0.5, 
         
         temp_dir = tempfile.TemporaryDirectory()
         audio_paths = []
+        permanent_chunk_paths = []
         
         try:
             for idx, chunk in enumerate(chunks, start=1):
@@ -527,10 +535,17 @@ def generate_elevenlabs_audio_chunks(text, voice_id, model=None, stability=0.5, 
                         f.write(audio_chunk)
                 
                 audio_paths.append(audio_path)
+                
+                # Create permanent copy of chunk for individual access
+                permanent_chunk = tempfile.NamedTemporaryFile(delete=False, suffix=f"_chunk_{idx}.mp3")
+                with open(audio_path, "rb") as src, open(permanent_chunk.name, "wb") as dst:
+                    dst.write(src.read())
+                permanent_chunk_paths.append(permanent_chunk.name)
+                
                 print(f"[ElevenLabs REST] Completed chunk {idx}/{total}: {audio_path}")
                 
                 if progress_callback:
-                    progress_callback(idx, total)
+                    progress_callback(idx, total, permanent_chunk_paths)
             
             # Create zip file
             zip_path = os.path.join(temp_dir.name, "elevenlabs_audio_chunks.zip")
@@ -545,7 +560,7 @@ def generate_elevenlabs_audio_chunks(text, voice_id, model=None, stability=0.5, 
                 dst.write(src.read())
             
             print(f"[ElevenLabs REST] All chunks completed. Zip created at: {zip_file.name}")
-            return zip_file.name
+            return zip_file.name, permanent_chunk_paths
             
         except Exception as e:
             raise Exception(f"ElevenLabs REST chunk generation failed: {str(e)}")
@@ -570,14 +585,15 @@ def background_generate_elevenlabs_audio(
     try:
         if is_file:
             # For file: zip of chunks with WebSocket
-            def progress_callback(current, total):
+            def progress_callback(current, total, chunk_paths=None):
                 audio_progress_data[progress_id] = {
                     "current": current,
                     "total": total,
                     "status": "processing",
+                    "chunks": [{"index": i+1, "path": path} for i, path in enumerate(chunk_paths)] if chunk_paths else []
                 }
 
-            zip_path = generate_elevenlabs_audio_chunks(
+            result = generate_elevenlabs_audio_chunks(
                 text,
                 voice_id,
                 model,
@@ -585,12 +601,21 @@ def background_generate_elevenlabs_audio(
                 similarity_boost,
                 progress_callback=progress_callback,
             )
+            
+            # Handle both tuple (zip_path, chunk_paths) and single zip_path returns
+            if isinstance(result, tuple):
+                zip_path, chunk_paths = result
+            else:
+                zip_path = result
+                chunk_paths = []
+            
             audio_progress_data[progress_id] = {
-                "current": audio_progress_data[progress_id]["total"],
-                "total": audio_progress_data[progress_id]["total"],
+                "current": len(chunk_paths) if chunk_paths else 1,
+                "total": len(chunk_paths) if chunk_paths else 1,
                 "status": "done",
                 "file_type": "zip",
                 "file_path": zip_path,
+                "chunks": [{"index": i+1, "path": path} for i, path in enumerate(chunk_paths)] if chunk_paths else []
             }
         else:
             # For text: single mp3 with WebSocket

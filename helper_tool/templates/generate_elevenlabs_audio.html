@@ -150,6 +150,14 @@
                 </div>
                 <p id="progress-text">Initializing...</p>
                 
+                <!-- Individual Chunks Section -->
+                <div id="chunks-container" style="display: none; margin-top: 1rem;">
+                    <h4>📄 Generated Chunks</h4>
+                    <div id="chunks-list" style="background: #f8f9fa; border-radius: 4px; padding: 1rem; max-height: 300px; overflow-y: auto;">
+                        <!-- Individual chunks will be added here dynamically -->
+                    </div>
+                </div>
+                
                 <!-- Audio Player and Download Section -->
                 <div id="download-section" style="display: none;">
                     <div id="audio-player-section" style="display: none; margin-bottom: 1rem;">
@@ -194,9 +202,13 @@
             
             const formData = new FormData(this);
             
-            // Show progress section
+            // Show progress section and reset UI
             document.getElementById('progress-section').style.display = 'block';
             document.getElementById('download-section').style.display = 'none';
+            document.getElementById('chunks-container').style.display = 'none';
+            document.getElementById('chunks-list').innerHTML = '';
+            document.getElementById('progress-fill').style.width = '0%';
+            document.getElementById('progress-text').textContent = 'Initializing...';
             
             fetch('{{ url_for("generate_elevenlabs_audio") }}', {
                 method: 'POST',
@@ -228,6 +240,8 @@
             const playButton = document.getElementById('play-button');
             const audioPlayerSection = document.getElementById('audio-player-section');
             const audioPlayer = document.getElementById('audio-player');
+            const chunksContainer = document.getElementById('chunks-container');
+            const chunksList = document.getElementById('chunks-list');
 
             function checkProgress() {
                 fetch(`{{ url_for("generate_elevenlabs_audio_progress", progress_id="PLACEHOLDER") }}`.replace('PLACEHOLDER', progressId))
@@ -243,9 +257,22 @@
 
                     if (data.status === 'processing') {
                         progressText.textContent = `Processing ${data.current}/${data.total} chunks... (${percentage}%)`;
+                        
+                        // Update chunks display if available
+                        if (data.chunks && data.chunks.length > 0) {
+                            updateElevenLabsChunksDisplay(data.chunks, progressId);
+                            chunksContainer.style.display = 'block';
+                        }
+                        
                         setTimeout(checkProgress, 1000);
                     } else if (data.status === 'done') {
                         progressText.textContent = '✅ Generation completed!';
+                        
+                        // Update chunks display if available
+                        if (data.chunks && data.chunks.length > 0) {
+                            updateElevenLabsChunksDisplay(data.chunks, progressId);
+                            chunksContainer.style.display = 'block';
+                        }
                         
                         // Set up download link
                         downloadLink.href = `{{ url_for("generate_elevenlabs_audio_download", progress_id="PLACEHOLDER") }}`.replace('PLACEHOLDER', progressId);
@@ -278,6 +305,35 @@
             }
 
             checkProgress();
+        }
+
+        function updateElevenLabsChunksDisplay(chunks, progressId) {
+            const chunksList = document.getElementById('chunks-list');
+            chunksList.innerHTML = '';
+            
+            chunks.forEach((chunk, index) => {
+                const chunkDiv = document.createElement('div');
+                chunkDiv.style.cssText = 'border: 1px solid #ddd; border-radius: 4px; padding: 0.75rem; margin-bottom: 0.5rem; background: white;';
+                
+                chunkDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                        <strong>Chunk ${chunk.index}</strong>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <audio controls style="height: 32px; min-width: 200px;">
+                                <source src="/generate-11-labs-audio-chunk/${progressId}/${chunk.index}" type="audio/mpeg">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <a href="/generate-11-labs-audio-chunk-download/${progressId}/${chunk.index}" 
+                               download="elevenlabs_chunk_${chunk.index}.mp3"
+                               style="background: #28a745; color: white; padding: 0.25rem 0.75rem; text-decoration: none; border-radius: 4px; font-size: 0.9rem;">
+                                📥 Download
+                            </a>
+                        </div>
+                    </div>
+                `;
+                
+                chunksList.appendChild(chunkDiv);
+            });
         }
 
         // Function to refresh credits
