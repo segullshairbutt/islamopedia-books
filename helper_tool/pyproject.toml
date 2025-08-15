@@ -12,10 +12,21 @@ dependencies = [
     "elevenlabs",
     "websockets>=15.0.1",
 ]
+packages = []
 
 [project.optional-dependencies]
 dev = [
     "ruff",
+]
+rag-with-ollama = [
+    "chromadb",
+    "langchain",
+    "langchain-community",
+    "sentence-transformers",
+    "pydantic",
+    "typer",
+    "markdown",
+    "ollama",
 ]
 
 [tool.ruff]
