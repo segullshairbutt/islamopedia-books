@@ -1,7 +1,7 @@
 /* Importing Jameel Nori Nastaleeq */
-@import url("./font/font-face.css");
+@import url('./_static/font-face.css');
 
-/* Apply the font to the body text */
+/* Apply the font to all elements */
 * {
   direction: rtl;
   justify-content: right !important;
@@ -40,7 +40,6 @@ p {
 .prev-next-area a.left-prev {
     float: right !important;
 }
-@import url('./_static/font-face.css');
 
 body {
   font-family: 'Jameel Noori Nastaleeq', serif;
@@ -48,4 +47,8 @@ body {
   line-height: 1.8;
   background-color: #fff;
   color: #000;
+}
+
+.arabic-text, .quranic-text {
+  font-family: 'Quranic Font', serif;
 }

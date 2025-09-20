@@ -6,8 +6,13 @@
   font-display: swap;
   unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF;
 }
+
+
 @font-face {
-  font-family: 'Jameel Noori Nastaleeq';
-  src: url('./font/JameelNooriNastaleeq.woff2') format('woff2');
+  font-family: "Quranic Font";
+  src: url("./SaleemQuranFontRegular.ttf") format("truetype");
   font-weight: normal;
-  font-style: normal; 
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+FB50-FDFF, U+FE70-FEFF;
+}
