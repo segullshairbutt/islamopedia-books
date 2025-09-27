@@ -49,6 +49,10 @@ body {
   color: #000;
 }
 
-.arabic-text, .quranic-text {
+.arabic-text {
+  font-family: 'Arabic Font', serif;
+}
+
+.quranic-text {
   font-family: 'Quranic Font', serif;
 }
