@@ -1,7 +1,7 @@
 /* Importing Jameel Nori Nastaleeq */
-@import url("./font/font-face.css");
+@import url("./_static/font-face.css");
 
-/* Apply the font to the body text */
+/* Apply the font to all elements */
 * {
   direction: rtl;
   justify-content: right !important;
@@ -20,23 +20,39 @@ h6 {
 
 /* Apply to all text in the book */
 p {
-  font-size: 1.375em;
+  font-size: 1.1em;
   margin-bottom: 1.15rem;
 }
 
 /* Footer Navigation (Customize to adopt rtl) */
 .prev-next-area a.right-next {
-    float: left !important;
+  float: left !important;
 }
 
 .prev-next-area a.right-next svg {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 .prev-next-area a.left-prev svg {
-    transform: rotate(-180deg);
+  transform: rotate(-180deg);
 }
 
 .prev-next-area a.left-prev {
-    float: right !important;
+  float: right !important;
+}
+
+body {
+  font-family: "Jameel Noori Nastaleeq", serif;
+  font-size: 24px; /* آپ چاہیں تو 26px یا 28px بھی کر سکتے ہیں */
+  line-height: 1.8;
+  background-color: #fff;
+  color: #000;
+}
+
+.arabic-text {
+  font-family: "Arabic Font", serif;
+}
+
+.quranic-text {
+  font-family: "Quranic Font", serif;
 }
