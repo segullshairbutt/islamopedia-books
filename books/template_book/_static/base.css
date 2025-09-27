@@ -1,5 +1,5 @@
 /* Importing Jameel Nori Nastaleeq */
-@import url("./_static/font-face.css");
+@import url("./font/font-face.css");
 
 /* Apply the font to all elements */
 * {
