@@ -1,6 +1,5 @@
 .venv
 **/_build
-.vscode/
 .DS_Store
 *.json
 *.ipynb

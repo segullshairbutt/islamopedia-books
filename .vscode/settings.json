@@ -1,0 +1,16 @@
+{
+    "python.defaultInterpreterPath": "",
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": "\\.md|.yml|.css$",
+                "cmd": "make build_book_via_docker"
+            }
+        ]
+    },
+    "[markdown]": {
+        "editor.fontFamily": "Jameel Noori Nastaleeq",
+        "editor.fontSize": 20,
+        "editor.lineHeight": 2
+    }
+}
