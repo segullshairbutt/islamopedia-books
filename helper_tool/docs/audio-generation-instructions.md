@@ -17,10 +17,7 @@ You are generating audio for an Islamic audiobook that contains mixed content in
 - **Tag**: `<span class="quranic-text">content</span>`
 - **Content Type**: Direct verses from the Holy Quran
 - **Special Handling Rules**:
-  - **If followed by Urdu translation**: SKIP the Quranic verse, do NOT recite it
-  - **If NOT followed by translation**: Recite the verse with EXTREME care and precision
-  - **Critical Requirement**: When reciting Quranic verses, there must be absolutely NO mistakes in pronunciation, tajweed, or articulation
-  - **Tone**: Use a respectful, reverent tone appropriate for sacred text
+  Don't recite the translation that follows the Quranic verse.
 
 ### 3. Urdu Content
 
