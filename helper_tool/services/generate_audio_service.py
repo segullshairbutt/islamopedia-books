@@ -34,7 +34,7 @@ def get_openai_usage_info():
         return {"success": False, "error": str(e)}
 
 
-def split_text_by_tokens(text, max_tokens=1900, encoding_name="cl100k_base"):
+def split_text_by_tokens(text, max_tokens=1600, encoding_name="cl100k_base"):
     enc = tiktoken.get_encoding(encoding_name)
     tokens = enc.encode(text)
     chunks = []
@@ -63,7 +63,7 @@ def generate_openai_tts(
     Calls OpenAI TTS API and returns the path to a zip file containing all mp3 chunks.
     Splits text into chunks of ≤1900 tokens, splitting at the last period.
     """
-    chunks = split_text_by_tokens(text, max_tokens=1900)
+    chunks = split_text_by_tokens(text)
     total = len(chunks)
     print(f"[TTS] Total splits/chunks to generate: {total}")
     temp_dir = tempfile.TemporaryDirectory()
