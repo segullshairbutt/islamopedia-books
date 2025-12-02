@@ -1,0 +1,25 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: content/intro.rtl
+chapters:
+- file: content/chap_1.rtl
+- file: content/chap_2.rtl
+- file: content/chap_3.rtl
+- file: content/chap_4.rtl
+- file: content/chap_5.rtl
+- file: content/chap_6.rtl
+- file: content/chap_7.rtl
+- file: content/chap_8.rtl
+- file: content/chap_9.rtl
+- file: content/chap_10.rtl
+- file: content/chap_11.rtl
+- file: content/chap_12.rtl
+- file: content/chap_13.rtl
+- file: content/chap_14.rtl
+- file: content/chap_15.rtl
+- file: content/chap_16.rtl
+- file: content/chap_17.rtl
+- file: content/chap_18.rtl
+- file: content/chap_19.rtl
