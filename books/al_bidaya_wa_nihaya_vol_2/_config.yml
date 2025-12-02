@@ -1,8 +1,9 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: الرحیق المختموم
-author: مبارکپوری صاحب
+title: البدایہ والنہایہ جلد دوم
+author: علامہ حافظ ابوالفدا عماد الدین ابن کثیر (مترجم؛ پروفیسر کوکب شادانی )
+copyright: 
 
 sphinx:
   config:
