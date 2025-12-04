@@ -28,11 +28,7 @@ You are generating audio for an Islamic audiobook that contains mixed content in
 
 ### For Quranic Recitation:
 
-- Apply proper tajweed rules
-- Maintain correct Arabic pronunciation
-- Use appropriate pauses and breathing
-- Show reverence and respect in delivery
-- Double-check accuracy before proceeding
+- Don't recite the translation that follows the Quranic verse.
 
 ### For General Content:
 
@@ -44,10 +40,9 @@ You are generating audio for an Islamic audiobook that contains mixed content in
 ## Processing Instructions
 
 1. Parse the markdown content to identify span tags with specific classes
-2. Determine if Quranic verses have translations following them
-3. Apply the appropriate handling rule for each content type
-4. Maintain the logical flow and sequence of the audiobook
-5. Ensure seamless transitions between different content types
+2. Apply the appropriate handling rule for each content type
+3. Maintain the logical flow and sequence of the audiobook
+4. Ensure seamless transitions between different content types
 
 ## Markdown Formatting and Pause Guidelines
 
@@ -89,7 +84,7 @@ You are generating audio for an Islamic audiobook that contains mixed content in
 - Use a warm, educational tone suitable for audiobook narration
 - Maintain consistent pacing appropriate for learning content
 - Emphasize important concepts without over-dramatizing
-- Respect the sacred nature of Quranic content with appropriate reverence
+- Don't recite Quranic verse to regard the sacredness of the text
 - Ensure accessibility for listeners of varying Arabic/Urdu proficiency levels
 - Follow markdown structure naturally, letting formatting guide the rhythm and flow of speech
 

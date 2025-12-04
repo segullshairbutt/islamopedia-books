@@ -34,7 +34,7 @@ def get_openai_usage_info():
         return {"success": False, "error": str(e)}
 
 
-def split_text_by_tokens(text, max_tokens=1600, encoding_name="cl100k_base"):
+def split_text_by_tokens(text, max_tokens=1500, encoding_name="cl100k_base"):
     enc = tiktoken.get_encoding(encoding_name)
     tokens = enc.encode(text)
     chunks = []
