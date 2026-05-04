@@ -17,15 +17,14 @@ This project uses `uv` for package management and `pyproject.toml` for dependenc
     ```
 
 3.  **Activate the virtual environment:**
-
-    -   On macOS and Linux:
-        ```bash
-        source .venv/bin/activate
-        ```
-    -   On Windows:
-        ```bash
-        .venv\Scripts\activate
-        ```
+    - On macOS and Linux:
+      ```bash
+      source .venv/bin/activate
+      ```
+    - On Windows:
+      ```bash
+      .venv\Scripts\activate
+      ```
 
 4.  **Install dependencies from `pyproject.toml`:**
 
@@ -37,22 +36,23 @@ This project uses `uv` for package management and `pyproject.toml` for dependenc
 
     The `/extract-text` endpoint uses the Google Cloud Vision API.  
     You must set the `GOOGLE_APPLICATION_CREDENTIALS` environment variable to the path of your Google service account JSON key file:
-
     - On macOS and Linux:
-        ```bash
-        export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-account-key.json"
-        ```
+      ```bash
+      export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-account-key.json"
+      ```
     - On Windows:
-        ```bash
-        set GOOGLE_APPLICATION_CREDENTIALS="C:\path\to\your\service-account-key.json"
-        ```
+      ```bash
+      set GOOGLE_APPLICATION_CREDENTIALS="C:\path\to\your\service-account-key.json"
+      ```
 
 6.  **Run the application:**
 
     ```bash
     flask run
     ```
+
     Or
+
     ```bash
     python app.py
     ```
@@ -61,10 +61,10 @@ This project uses `uv` for package management and `pyproject.toml` for dependenc
 
 ## Endpoints
 
--   `GET /extract-text`: Upload a PDF and download a zip of per-page text files extracted using Google Vision.
--   `POST /extract-text`: Accepts a PDF file upload and returns a zip file of extracted text.
--   `GET /generate-audio`: Page for audio generation (work in progress).
--   `POST /generate-audio`: Endpoint for audio generation (work in progress).
+- `GET /extract-text`: Upload a PDF and download a zip of per-page text files extracted using Google Vision.
+- `POST /extract-text`: Accepts a PDF file upload and returns a zip file of extracted text.
+- `GET /generate-audio`: Page for audio generation (work in progress).
+- `POST /generate-audio`: Endpoint for audio generation (work in progress).
 
 **Note:**  
 The `/extract-text` endpoint requires a valid Google Cloud Vision API key and the `GOOGLE_APPLICATION_CREDENTIALS` environment variable to be set.
