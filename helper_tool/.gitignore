@@ -16,3 +16,6 @@ pip-wheel-metadata/
 
 # uv
 .uv/
+
+# Ignore all directories starting with .
+.*/
