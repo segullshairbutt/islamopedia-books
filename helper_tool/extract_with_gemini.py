@@ -62,7 +62,7 @@ def extract_text_with_gemini(image_bytes: bytes) -> str:
     Returns:
         str: Extracted text
     """
-    model = genai.GenerativeModel("gemini-2.5-flash-lite")
+    model = genai.GenerativeModel("gemini-3.1-flash-lite")
 
     # Encode image to base64
     image_data = base64.standard_b64encode(image_bytes).decode("utf-8")
@@ -90,13 +90,15 @@ def extract_text_with_gemini(image_bytes: bytes) -> str:
     return message.text
 
 
-def extract_pdf_with_gemini(pdf_path: str, output_dir: str = ".pages") -> list:
+def extract_pdf_with_gemini(pdf_path: str, output_dir: str = ".pages", start_page: int = None, end_page: int = None) -> list:
     """
-    Extracts text from all PDF pages using Gemini and saves as markdown files.
+    Extracts text from PDF pages using Gemini and saves as markdown files.
 
     Args:
         pdf_path: Path to the input PDF
         output_dir: Directory to save markdown files (default: .pages)
+        start_page: Starting page number (1-indexed, optional)
+        end_page: Ending page number (1-indexed, inclusive, optional)
 
     Returns:
         list: List of created markdown file paths
@@ -114,12 +116,25 @@ def extract_pdf_with_gemini(pdf_path: str, output_dir: str = ".pages") -> list:
     total_pages = len(pdf_document)
     pdf_document.close()
 
-    print(f"Processing {total_pages} pages from {pdf_path}...")
+    # Determine page range (convert from 1-indexed to 0-indexed)
+    start_idx = (start_page - 1) if start_page else 0
+    end_idx = (end_page) if end_page else total_pages
+
+    # Validate page range
+    if start_idx < 0 or start_idx >= total_pages:
+        raise ValueError(f"Start page {start_page} is out of range (1-{total_pages})")
+    if end_idx < 1 or end_idx > total_pages:
+        raise ValueError(f"End page {end_page} is out of range (1-{total_pages})")
+    if start_idx >= end_idx:
+        raise ValueError(f"Start page ({start_page}) must be before end page ({end_page})")
+
+    pages_to_process = end_idx - start_idx
+    print(f"Processing pages {start_idx + 1}-{end_idx} ({pages_to_process} pages) from {pdf_path}...")
 
     created_files = []
 
-    for page_num in range(total_pages):
-        print(f"  Extracting page {page_num + 1}/{total_pages}...", end=" ", flush=True)
+    for page_num in range(start_idx, end_idx):
+        print(f"  Extracting page {page_num + 1}/{end_idx}...", end=" ", flush=True)
 
         try:
             # Convert page to image
@@ -151,11 +166,13 @@ def main():
     parser = argparse.ArgumentParser(description="Extract text from PDF using Google Gemini Vision API.")
     parser.add_argument("pdf_path", help="Path to the PDF file")
     parser.add_argument("--output-dir", default=".pages", help="Output directory for markdown files (default: .pages)")
+    parser.add_argument("--start-page", type=int, default=None, help="Starting page number (1-indexed, optional)")
+    parser.add_argument("--end-page", type=int, default=None, help="Ending page number (1-indexed, inclusive, optional)")
 
     args = parser.parse_args()
 
     try:
-        extract_pdf_with_gemini(args.pdf_path, args.output_dir)
+        extract_pdf_with_gemini(args.pdf_path, args.output_dir, args.start_page, args.end_page)
     except Exception as e:
         print(f"ERROR: {e}")
         exit(1)
