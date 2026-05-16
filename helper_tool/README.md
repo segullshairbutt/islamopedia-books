@@ -71,6 +71,13 @@ The `/extract-text` endpoint requires a valid Google Cloud Vision API key and th
 
 ## CLI Scripts
 
+-   **[extract_with_gemini.py](docs/extract_with_gemini.md)**: Extract text from PDF using Google Gemini Vision API. Saves each page as a separate markdown file with preserved formatting.
+
+    Usage:
+    ```bash
+    python extract_with_gemini.py /path/to/file.pdf [--output-dir DIR] [--start-page NUM] [--end-page NUM]
+    ```
+
 -   **[merge_pages.py](docs/merge_pages.md)**: Merge extracted page markdown files into chapters based on configuration. Combines pages according to specified ranges and reports missing pages inline.
 
     Usage:
