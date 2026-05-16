@@ -68,3 +68,12 @@ This project uses `uv` for package management and `pyproject.toml` for dependenc
 
 **Note:**  
 The `/extract-text` endpoint requires a valid Google Cloud Vision API key and the `GOOGLE_APPLICATION_CREDENTIALS` environment variable to be set.
+
+## CLI Scripts
+
+-   **[merge_pages.py](docs/merge_pages.md)**: Merge extracted page markdown files into chapters based on configuration. Combines pages according to specified ranges and reports missing pages inline.
+
+    Usage:
+    ```bash
+    python merge_pages.py /path/to/books_config.json
+    ```
