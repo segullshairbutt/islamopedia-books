@@ -9,6 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Pin Node 24 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.16.0'
       - name: Set execute permissions for build script
         run: chmod +x ./scripts/build_books.sh
       - name: Build the book using docker image
