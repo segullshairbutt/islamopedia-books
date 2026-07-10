@@ -3,3 +3,11 @@
 .DS_Store
 *.json
 *.ipynb
+
+node_modules/
+.env
+*.wav
+*.txt
+
+outputAudios/
+emotionTextFiles/

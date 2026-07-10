@@ -12,5 +12,6 @@
         "editor.fontFamily": "Noto Nastaliq Urdu",
         "editor.fontSize": 42,
         "editor.lineHeight": 2
-    }
+    },
+    "git.ignoreLimitWarning": true
 }
