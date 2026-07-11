@@ -5,4 +5,14 @@ format: jb-book
 root: content/intro
 chapters:
 - file: content/chap_1
+- file: content/chap_2
+- file: content/chap_3
+- file: content/chap_4
+- file: content/chap_5
+- file: content/chap_6
+- file: content/chap_7
+- file: content/chap_8
+- file: content/chap_9
+- file: content/chap_10
+- file: content/chap_11
 
