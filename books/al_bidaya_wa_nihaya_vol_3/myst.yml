@@ -20,3 +20,4 @@ site:
   options:
     folders: true
     style: ./_static/base.css
+    logo_text: البدایہ والنہایہ جلد سوم

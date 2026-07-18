@@ -1,12 +1,10 @@
 #!/bin/bash
-# Build every migrated (Jupyter Book 2 / MyST) book into the Firebase `static/`
-# public directory, using the Docker builder image (which bundles Python, uv and
-# the Node.js runtime that MyST needs).
+# Build every book into the Firebase `static/` public directory, using the
+# Docker builder image (which bundles Python, uv and the Node.js runtime that
+# MyST needs). All books are expected to be Jupyter Book 2 (MyST) projects.
 #
 # Each book is hosted at `/<book_name>/`, so it is built with
 # BASE_URL=/<book_name> to make the theme's absolute asset paths resolve there.
-# Books not yet migrated to Jupyter Book 2 (no myst.yml) are skipped with a
-# notice, so the pipeline keeps working during a phased rollout.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -21,10 +19,6 @@ docker build -t "$IMAGE" .
 built=0
 for dir in "$ROOT"/books/*/; do
     book="$(basename "$dir")"
-    if [ ! -f "$dir/myst.yml" ]; then
-        echo "Skipping '$book' — not migrated to Jupyter Book 2 (no myst.yml)."
-        continue
-    fi
 
     echo "Building '$book' (baseurl /$book) ..."
     # Generate the self-contained _static/base.css (fonts inlined) inside the
