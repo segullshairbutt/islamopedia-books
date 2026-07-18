@@ -9,12 +9,6 @@
 /* Font faces (Nastaliq body font + Arabic + Quranic display fonts) */
 @import url("./font/font-face.css");
 
-/* Nudge the base font size up so theme text (headings, nav, sidebar) scales a
- * little larger for readability of the Urdu/Arabic script. */
-html {
-  font-size: 108%;
-}
-
 /* Right-to-left Urdu/Arabic layout + default Nastaliq font */
 * {
   direction: rtl;
