@@ -1,0 +1,21 @@
+# Book settings — Jupyter Book 2 (MyST). Learn more at https://mystmd.org
+version: 1
+project:
+  title: البدایہ والنہایہ جلد دوم
+  authors:
+  - name: علامہ حافظ ابوالفدا عماد الدین ابن کثیر (مترجم؛ پروفیسر کوکب شادانی )
+  toc:
+  - file: content/chap_1.md
+  - file: content/chap_2.md
+  - file: content/chap_3.md
+  - file: content/chap_4.md
+  - file: content/chap_5.md
+  - file: content/chap_6.md
+  - file: content/chap_7.md
+  - file: content/chap_8.md
+  - file: content/chap_9.md
+site:
+  template: book-theme
+  options:
+    folders: true
+    style: ./_static/base.css
