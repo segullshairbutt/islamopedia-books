@@ -7,7 +7,7 @@ IMAGE_NAME ?= islamopedia-books
 
 build_book:
 	echo "Building book..."
-	$(PWD)/.venv/bin/jupyter-book build --all books/${BOOK_NAME}
+	uv run jupyter-book build --all books/${BOOK_NAME}
 build_docker_image:
 	echo "Building docker image..."
 	docker build -t $(IMAGE_NAME) .

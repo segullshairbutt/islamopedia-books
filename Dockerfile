@@ -1,13 +1,14 @@
 FROM python:3.12.7-slim-bullseye
 WORKDIR /app
-# Installing poetry
-RUN pip install poetry==2.0.0
 
-# Copying the poetry.lock and pyproject.toml files
-COPY pyproject.toml poetry.lock /app/
+# Installing uv
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
-# Do not create a virtualenv
-RUN poetry config virtualenvs.create false
+# Copying the pyproject.toml and uv.lock files
+COPY pyproject.toml uv.lock /app/
 
-# Install dependencies
-RUN poetry install
+# Install dependencies into /app/.venv
+RUN uv sync --frozen --no-dev
+
+# Put the project's virtualenv on PATH so `jupyter-book` is available directly
+ENV PATH="/app/.venv/bin:$PATH"
