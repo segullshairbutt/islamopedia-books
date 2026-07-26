@@ -1,7 +1,7 @@
 # Book settings — Jupyter Book 2 (MyST). Learn more at https://mystmd.org
 version: 1
 project:
-  title: الرہق المکتوم
+  title: الرحیق المکتوم
   authors:
   - name: مولانا صفی الرحمن مبارک پوری
   toc:
@@ -38,4 +38,4 @@ site:
   options:
     folders: true
     style: ./_static/base.css
-    logo_text: الرہق المکتوم
+    logo_text: الرحیق المکتوم
