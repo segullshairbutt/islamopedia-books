@@ -1,0 +1,41 @@
+# Book settings — Jupyter Book 2 (MyST). Learn more at https://mystmd.org
+version: 1
+project:
+  title: الرہق المکتوم
+  authors:
+  - name: مولانا صفی الرحمن مبارک پوری
+  toc:
+  - file: content/chap_1.rtl.md
+  - file: content/chap_2.rtl.md
+  - file: content/chap_3.rtl.md
+  - file: content/chap_4.rtl.md
+  - file: content/chap_5.rtl.md
+  - file: content/chap_6.rtl.md
+  - file: content/chap_7.rtl.md
+  - file: content/chap_8.rtl.md
+  - file: content/chap_9.rtl.md
+  - file: content/chap_10.rtl.md
+  - file: content/chap_11.rtl.md
+  - file: content/chap_12.rtl.md
+  - file: content/chap_13.rtl.md
+  - title: خود آزمائشی سوالات (MCQs)
+    children:
+    - file: content/chap_1.mcqs.md
+    - file: content/chap_2.mcqs.md
+    - file: content/chap_3.mcqs.md
+    - file: content/chap_4.mcqs.md
+    - file: content/chap_5.mcqs.md
+    - file: content/chap_6.mcqs.md
+    - file: content/chap_7.mcqs.md
+    - file: content/chap_8.mcqs.md
+    - file: content/chap_9.mcqs.md
+    - file: content/chap_10.mcqs.md
+    - file: content/chap_11.mcqs.md
+    - file: content/chap_12.mcqs.md
+    - file: content/chap_13.mcqs.md
+site:
+  template: book-theme
+  options:
+    folders: true
+    style: ./_static/base.css
+    logo_text: الرہق المکتوم
