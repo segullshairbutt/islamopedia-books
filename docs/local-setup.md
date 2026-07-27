@@ -10,28 +10,19 @@ Following are the recommended setups for running the project locally:
 5. Use the [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) extension in VSCode to view the book in the browser in real-time.
 
 ## Using Local Python Environment
-We are using Poetry to manage the dependencies of the project. To setup the project locally, follow the steps below:
-1. Install python>3.12 and poetry==1.8.3, preferably using [pyenv](https://github.com/pyenv/pyenv)
-2. Create a virtual environment and install dependencies using:
+We are using [uv](https://docs.astral.sh/uv/) to manage the dependencies of the project. To setup the project locally, follow the steps below:
+1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/). It will manage the Python version and the virtual environment for you.
+2. Create a virtual environment (`.venv` in the project root) and install dependencies using:
     ```bash
-    poetry install
+    uv sync
     ```
-    2.1. If you want to create a virtual environment directory in the project, use the following command:
+3. To build the book, you need to run the following command:
     ```bash
-    poetry config virtualenvs.in-project true
-    ```
-    For more information, visit the [Poetry documentation](https://python-poetry.org/docs/configuration/#virtualenvsin-project).
-3. Activate the virtual environment:
-    ```bash
-    source .venv/bin/activate
-    ```
-4. To build the book, you need to run the following command:
-    ```bash
-    poetry run jupyter-book build BOOK_PATH
+    uv run jupyter-book build BOOK_PATH
     ```
     Replace `BOOK_PATH` with the path of the book you want to build. If you want to build the `template_book`, you can use the following command:
     ```bash
-    poetry run jupyter-book build books/template_book
+    uv run jupyter-book build books/template_book
     ```
     Or If you want to build the book using the `make` command, you can use the following command:
     ```bash

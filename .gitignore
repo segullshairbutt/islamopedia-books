@@ -13,3 +13,11 @@ outputAudios/
 emotionTextFiles/
 inputFiles/
 index.test.ts
+
+# Generated per-book site builds published by scripts/build_books.sh.
+# Only the landing page and 404 page are tracked under static/.
+/static/*/
+
+# Self-contained stylesheet generated at build time by scripts/embed_fonts.py
+# from _static/base.src.css + the font files (which ARE tracked).
+books/*/_static/base.css
