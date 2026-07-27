@@ -1,8 +1,8 @@
 .venv
 **/_build
 .DS_Store
-*.json
 *.ipynb
+.vscode/
 
 node_modules/
 .env
@@ -11,3 +11,5 @@ node_modules/
 
 outputAudios/
 emotionTextFiles/
+inputFiles/
+index.test.ts
