@@ -1,8 +1,18 @@
 .venv
 **/_build
 .DS_Store
-*.json
 *.ipynb
+.vscode/
+
+node_modules/
+.env
+*.wav
+*.txt
+
+outputAudios/
+emotionTextFiles/
+inputFiles/
+index.test.ts
 
 # Generated per-book site builds published by scripts/build_books.sh.
 # Only the landing page and 404 page are tracked under static/.
