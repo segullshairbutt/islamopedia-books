@@ -5,65 +5,515 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Islamopedia Books</title>
     <style>
+        :root {
+            --bg: #f6f5f2;
+            --surface: #ffffff;
+            --text: #2b2b28;
+            --text-muted: #6b6a64;
+            --border: #e6e3dc;
+            --accent: #8a6d3b;
+            --accent-soft: #f1e9db;
+            --shadow: rgba(43, 42, 40, 0.06);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #1b1a17;
+                --surface: #242320;
+                --text: #ece9e2;
+                --text-muted: #a8a49a;
+                --border: #35332d;
+                --accent: #d3ac6e;
+                --accent-soft: #332a1c;
+                --shadow: rgba(0, 0, 0, 0.5);
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.65;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
+            background-color: var(--bg);
+            color: var(--text);
         }
+
         header {
-            background: #35424a;
-            color: #ffffff;
-            padding: 10px 0;
+            padding: 3.5rem 1.5rem 2.5rem;
             text-align: center;
         }
+
+        header .kicker {
+            display: inline-block;
+            font-size: 0.75rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
         h1 {
             margin: 0;
+            font-size: 2.25rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
         }
+
         .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-            padding: 20px;
-            background: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 0 1.5rem 4rem;
         }
-        ul {
-            list-style: none;
+
+        .intro {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.5rem 1.75rem;
+            box-shadow: 0 4px 14px var(--shadow);
+            color: var(--text-muted);
+            font-size: 0.98rem;
+        }
+
+        .intro a {
+            color: var(--accent);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .intro a:hover {
+            text-decoration: underline;
+        }
+
+        .list-header {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 1rem;
+            margin: 2.75rem 0 1.1rem;
+            flex-wrap: wrap;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .result-count {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .search-box {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-box svg {
+            position: absolute;
+            left: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .search-box input {
+            width: 100%;
+            font-size: 0.95rem;
+            font-family: inherit;
+            padding: 0.75rem 0.9rem 0.75rem 2.4rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--surface);
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+
+        .book-groups {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .book-group {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.1rem 1.2rem 1.3rem;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .group-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0 0 1rem;
+            font: inherit;
+            color: inherit;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .group-header:disabled {
+            cursor: default;
+        }
+
+        .group-title {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .group-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-shrink: 0;
+        }
+
+        .group-count {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent);
+            background: var(--accent-soft);
+            border-radius: 999px;
+            padding: 0.15rem 0.6rem;
+        }
+
+        .chevron {
+            width: 16px;
+            height: 16px;
+            color: var(--text-muted);
+            transition: transform 0.3s ease;
+        }
+
+        .group-header[aria-expanded="true"] .chevron {
+            transform: rotate(180deg);
+        }
+
+        .stack-wrap {
+            position: relative;
+            transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1), height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .book-spine {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 88px;
+            height: 124px;
+            border-radius: 3px 9px 9px 3px;
+            padding: 0.65rem 0.55rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            text-decoration: none;
+            font-size: 0.7rem;
+            line-height: 1.25;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.95);
+            box-shadow: -3px 4px 10px rgba(0, 0, 0, 0.28), inset 3px 0 0 rgba(0, 0, 0, 0.18);
+            cursor: pointer;
+            transition: transform 0.5s cubic-bezier(0.34, 1.4, 0.4, 1), box-shadow 0.3s ease;
+        }
+
+        .book-spine:hover {
+            box-shadow: -3px 6px 16px rgba(0, 0, 0, 0.32), inset 3px 0 0 rgba(0, 0, 0, 0.18);
+        }
+
+        .stack-wrap.expanded .book-spine:hover {
+            transform: translate(var(--tx), -6px) rotate(0deg) !important;
+        }
+
+        .book-spine mark {
+            background: rgba(255, 255, 255, 0.35);
+            color: inherit;
+            border-radius: 2px;
+            padding: 0 2px;
+        }
+
+        .group-title mark {
+            background: none;
+            color: var(--accent);
             padding: 0;
         }
-        ul li {
-            background: #e4e4e4;
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 5px;
+
+        .stack-hint {
+            margin: 0.6rem 0 0;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-style: italic;
         }
-        ul li a {
+
+        .cover-single {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .cover-single .book-spine {
+            position: relative;
+            width: 108px;
+            height: 148px;
+            transform: none;
+        }
+
+        .cover-single .book-spine:hover {
+            transform: translateY(-4px) !important;
+        }
+
+        .empty-state {
+            display: none;
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 1.5rem 3rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--accent);
             text-decoration: none;
-            color: #333;
         }
-        ul li a:hover {
+
+        footer a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <header>
+        <span class="kicker">Book Archive</span>
         <h1>Islamopedia Books</h1>
     </header>
     <div class="container">
-        <p>This is a helper repository of <a href="https://github.com/segullshairbutt/islamopedia/">Islamopedia</a> to keep the backup of the books in text format. This will allow us to keep the books in a version control system and allow us to collaborate on the books easily. Moreover, these are the static list of the books updated as the new books are attached to them.</p>
-        <h2>List of Books</h2>
-        <ul>
-            <li><a href="./template_book/" target="_blank">Template Book</a></li>
-            <li><a href="./al_bidaya_wa_nihaya_vol_1/" target="_blank">Albidaya Wa Nihaya Volume 1</a></li>
-            <li><a href="./al_bidaya_wa_nihaya_vol_2/" target="_blank">Albidaya Wa Nihaya Volume 2</a></li>
-            <li><a href="./al_bidaya_wa_nihaya_vol_3/" target="_blank">Albidaya Wa Nihaya Volume 3</a></li>
-            <li><a href="./al_bidaya_wa_nihaya_vol_4/" target="_blank">Albidaya Wa Nihaya Volume 4</a></li>
-            <!-- Add more books here -->
-        </ul>
+        <p class="intro">
+            This is a helper repository of <a href="https://github.com/segullshairbutt/islamopedia/" target="_blank" rel="noopener">Islamopedia</a>
+            to keep the backup of the books in text format. This allows the books to live in a version control
+            system and makes it easy to collaborate on them. The list below is updated as new books are attached.
+        </p>
+
+        <div class="list-header">
+            <h2>List of Books</h2>
+            <span class="result-count" id="resultCount"></span>
+        </div>
+
+        <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="searchInput" placeholder="Search by title or volume…" autocomplete="off">
+        </div>
+
+        <div class="book-groups" id="bookGroups"></div>
+        <p class="empty-state" id="emptyState">No books match your search.</p>
     </div>
+    <footer>
+        Maintained on <a href="https://github.com/segullshairbutt/islamopedia-books" target="_blank" rel="noopener">GitHub</a>
+    </footer>
+
+    <script>
+        // Single source of truth for the catalog. Add a new series by pushing
+        // another entry here; add a volume by pushing into an existing `volumes` array.
+        const BOOKS = [
+            {
+                series: "Al-Bidaya Wa Nihaya",
+                volumes: [
+                    { label: "Volume 1", path: "al_bidaya_wa_nihaya_vol_1" },
+                    { label: "Volume 2", path: "al_bidaya_wa_nihaya_vol_2" },
+                    { label: "Volume 3", path: "al_bidaya_wa_nihaya_vol_3" },
+                    { label: "Volume 4", path: "al_bidaya_wa_nihaya_vol_4" },
+                ],
+            },
+        ];
+
+        const SPINE_W = 88;
+        const SPINE_H = 124;
+        const GAP = 14;
+        const COLLAPSE_DX = 11;
+        const ROTATIONS = [-7, 6, -4, 8, -5, 5, -6, 4];
+        const DRIFTS = [0, -4, 3, -3, 4, -2, 2, -3];
+        const PALETTE = ["#8a4b3b", "#3f6b52", "#4a5a8a", "#7a4a72", "#8a6d3b", "#3f7a72", "#6a4a8a", "#8a5a3f"];
+
+        const groupsEl = document.getElementById("bookGroups");
+        const emptyEl = document.getElementById("emptyState");
+        const countEl = document.getElementById("resultCount");
+        const searchEl = document.getElementById("searchInput");
+        const expandedSeries = new Set();
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>"']/g, (c) => ({
+                "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+            }[c]));
+        }
+
+        function highlight(text, query) {
+            const safe = escapeHtml(text);
+            if (!query) return safe;
+            const idx = safe.toLowerCase().indexOf(query.toLowerCase());
+            if (idx === -1) return safe;
+            return safe.slice(0, idx) + "<mark>" + safe.slice(idx, idx + query.length) + "</mark>" + safe.slice(idx + query.length);
+        }
+
+        function spineColor(i) {
+            return PALETTE[i % PALETTE.length];
+        }
+
+        function sizeFor(n, expanded) {
+            if (expanded) {
+                return { w: n * SPINE_W + (n - 1) * GAP, h: SPINE_H };
+            }
+            return { w: SPINE_W + (n - 1) * COLLAPSE_DX + 18, h: SPINE_H + 18 };
+        }
+
+        function layout(wrap, expanded) {
+            const spines = Array.from(wrap.querySelectorAll(".book-spine"));
+            const n = spines.length;
+            const { w, h } = sizeFor(n, expanded);
+            wrap.style.width = w + "px";
+            wrap.style.height = h + "px";
+            spines.forEach((el, i) => {
+                let tx, ty, rot;
+                if (expanded) {
+                    tx = i * (SPINE_W + GAP);
+                    ty = 0;
+                    rot = 0;
+                } else {
+                    tx = i * COLLAPSE_DX + 6;
+                    ty = 8 - i * 2 + DRIFTS[i % DRIFTS.length];
+                    rot = ROTATIONS[i % ROTATIONS.length];
+                }
+                el.style.setProperty("--tx", tx + "px");
+                el.style.transform = `translate(${tx}px, ${ty}px) rotate(${rot}deg)`;
+                el.style.zIndex = i;
+            });
+        }
+
+        function render(query) {
+            const q = query.trim().toLowerCase();
+            groupsEl.innerHTML = "";
+
+            let totalVolumes = 0;
+            let visibleGroups = 0;
+
+            BOOKS.forEach((group) => {
+                totalVolumes += group.volumes.length;
+                const seriesMatches = group.series.toLowerCase().includes(q);
+                const volumes = q
+                    ? group.volumes.filter((v) => seriesMatches || v.label.toLowerCase().includes(q))
+                    : group.volumes;
+
+                if (q && volumes.length === 0) return;
+                visibleGroups++;
+
+                const card = document.createElement("div");
+                card.className = "book-group";
+
+                if (volumes.length === 1) {
+                    const isNamedVolume = volumes[0].label && volumes[0].label.toLowerCase() !== "read";
+                    card.innerHTML = `
+                        <div class="group-header" style="margin-bottom: 0.9rem;">
+                            <span class="group-title">${highlight(group.series, q)}</span>
+                        </div>
+                        <div class="cover-single">
+                            <a class="book-spine" style="background:${spineColor(BOOKS.indexOf(group))};"
+                               href="./${volumes[0].path}/" target="_blank" rel="noopener">
+                                ${isNamedVolume ? `<span>${highlight(volumes[0].label, q)}</span>` : ""}
+                            </a>
+                        </div>
+                    `;
+                    groupsEl.appendChild(card);
+                    return;
+                }
+
+                const forceExpand = !!q || expandedSeries.has(group.series);
+                card.innerHTML = `
+                    <button class="group-header" aria-expanded="${forceExpand}">
+                        <span class="group-title">${highlight(group.series, q)}</span>
+                        <span class="group-meta">
+                            <span class="group-count">${volumes.length} volumes</span>
+                            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </span>
+                    </button>
+                    <div class="stack-wrap ${forceExpand ? "expanded" : ""}">
+                        ${volumes.map((v, i) => `
+                            <a class="book-spine" style="background:${spineColor(i)};" href="./${v.path}/" target="_blank" rel="noopener">
+                                <span>${highlight(v.label, q)}</span>
+                            </a>
+                        `).join("")}
+                    </div>
+                    <p class="stack-hint" style="display:${forceExpand ? "none" : "block"};">Click to open the stack</p>
+                `;
+                groupsEl.appendChild(card);
+
+                const wrap = card.querySelector(".stack-wrap");
+                const header = card.querySelector(".group-header");
+                const hint = card.querySelector(".stack-hint");
+                layout(wrap, forceExpand);
+
+                function toggle() {
+                    const nowExpanded = !wrap.classList.contains("expanded");
+                    wrap.classList.toggle("expanded", nowExpanded);
+                    header.setAttribute("aria-expanded", String(nowExpanded));
+                    hint.style.display = nowExpanded ? "none" : "block";
+                    layout(wrap, nowExpanded);
+                    if (nowExpanded) {
+                        expandedSeries.add(group.series);
+                    } else {
+                        expandedSeries.delete(group.series);
+                    }
+                }
+
+                header.addEventListener("click", toggle);
+                wrap.querySelectorAll(".book-spine").forEach((spine) => {
+                    spine.addEventListener("click", (e) => {
+                        if (!wrap.classList.contains("expanded")) {
+                            e.preventDefault();
+                            toggle();
+                        }
+                    });
+                });
+            });
+
+            emptyEl.style.display = visibleGroups === 0 ? "block" : "none";
+            countEl.textContent = q
+                ? `${visibleGroups} of ${BOOKS.length} series matched`
+                : `${BOOKS.length} series · ${totalVolumes} volumes`;
+        }
+
+        searchEl.addEventListener("input", (e) => render(e.target.value));
+        render("");
+    </script>
 </body>
 </html>
