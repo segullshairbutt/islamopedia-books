@@ -1,0 +1,25 @@
+# Book settings — Jupyter Book 2 (MyST). Learn more at https://mystmd.org
+version: 1
+project:
+  title: محتصر سیرت رسول ﷺ
+  authors:
+  - name: الشیخ عبداللہ بن الشیخ محمد بن عبدالوہاب رحمہ اللہ
+  toc:
+  - file: content/intro.md
+  - file: content/chap_1.md
+  - file: content/chap_2.md
+  - file: content/chap_3.md
+  - file: content/chap_4.md
+  - file: content/chap_5.md
+  - file: content/chap_6.md
+  - file: content/chap_7.md
+  - file: content/chap_8.md
+  - file: content/chap_9.md
+  - file: content/chap_10.md
+  - file: content/chap_11.md
+site:
+  template: book-theme
+  options:
+    folders: true
+    style: ./_static/base.css
+    logo_text: محتصر سیرت رسول ﷺ
