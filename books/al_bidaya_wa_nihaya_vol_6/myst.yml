@@ -1,0 +1,32 @@
+# Book settings — Jupyter Book 2 (MyST). Learn more at https://mystmd.org
+version: 1
+project:
+  title: البدایہ والنہایہ جلد چہارم
+  authors:
+  - name: علامہ حافظ ابوالفدا عماد الدین ابن کثیر (مترجم؛ پروفیسر کوکب شادانی )
+  toc:
+  - file: content/chap_1.rtl.md
+  - file: content/chap_2.rtl.md
+  - file: content/chap_3.rtl.md
+  - file: content/chap_4.rtl.md
+  - file: content/chap_5.rtl.md
+  - file: content/chap_6.rtl.md
+  - file: content/chap_7.rtl.md
+  - file: content/chap_8.rtl.md
+  - file: content/chap_9.rtl.md
+  - file: content/chap_10.rtl.md
+  - file: content/chap_11.rtl.md
+  - file: content/chap_12.rtl.md
+  - file: content/chap_13.rtl.md
+  - file: content/chap_14.rtl.md
+  - file: content/chap_15.rtl.md
+  - file: content/chap_16.rtl.md
+  - file: content/chap_17.rtl.md
+  - file: content/chap_18.rtl.md
+  - file: content/chap_19.rtl.md
+site:
+  template: book-theme
+  options:
+    folders: true
+    style: ./_static/base.css
+    logo_text: البدایہ والنہایہ جلد چہارم
