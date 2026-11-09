@@ -1,0 +1,47 @@
+/* Editable source for the book stylesheet.
+ *
+ * Do NOT point myst.yml at this file. MyST does not follow @import or copy the
+ * referenced fonts, so run `python scripts/embed_fonts.py books/<book>` to
+ * generate the self-contained `base.css` (fonts inlined as data: URIs), which
+ * is the file `myst.yml` loads via `site.options.style`.
+ */
+
+/* Font faces (Nastaliq body font + Arabic + Quranic display fonts) */
+@import url("./font/font-face.css");
+
+/* Right-to-left Urdu/Arabic layout + default Nastaliq font */
+* {
+  direction: rtl;
+  font-family: "Jameel Noori Nastaleeq", system-ui, Arial, sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Jameel Noori Nastaleeq", system-ui, Arial, sans-serif;
+}
+
+p {
+  font-size: 1.2em;
+  margin-bottom: 1.15rem;
+}
+
+body {
+  font-family: "Jameel Noori Nastaleeq", serif;
+  font-size: 32px;
+  line-height: 1.9;
+  background-color: #fff;
+  color: #000;
+}
+
+/* Inline scriptural spans used throughout the book content */
+.arabic-text {
+  font-family: "Arabic Font", serif;
+}
+
+.quranic-text {
+  font-family: "Quranic Font", serif;
+}
