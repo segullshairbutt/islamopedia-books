@@ -13,6 +13,12 @@ This is a helper repository of [Islamopedia](https://github.com/segullshairbutt/
 1. The design of the page should be consistent to the book. Because, in future in our tool we will provide the functionality to reference to the line numbers of the books. So, we need to make sure that we are even taking care of the line breaks.
 2. The writer should use the proper headings which will help us to keep the record and build the table of content programmatically.
 
+## 🎧 Audiobook & Media Automation Tool
+
+We have a built-in Node.js tool to automatically convert finalized chapter files into high-quality audiobooks with realistic emotional voice expression.
+
+* **To generate audiobooks:** Please read the complete setup and running steps in the [Audiobook Generation Guide](./docs/audio-book.md).
+
 ## Contribution workflow
 
 A new PR should be created against the work's small unit (as much as possible). It can be one page of the book, a book chapter, or a group of chapters. But the smaller the PR, the easier to review.
