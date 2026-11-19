@@ -2,6 +2,7 @@
 **/_build
 .DS_Store
 *.json
+!*books_config*.json
 *.ipynb
 
 # Generated per-book site builds published by scripts/build_books.sh.

@@ -1,0 +1,16 @@
+{
+  "inputDirectory": "./pages",
+  "outputDirectory": "./chapters",
+  "chapters": [
+    {
+      "name": "chapter_1.md",
+      "startPage": 1,
+      "endPage": 50
+    },
+    {
+      "name": "chapter_2.md",
+      "startPage": 51,
+      "endPage": 100
+    }
+  ]
+}
