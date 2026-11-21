@@ -11,3 +11,11 @@
 # Self-contained stylesheet generated at build time by scripts/embed_fonts.py
 # from _static/base.src.css + the font files (which ARE tracked).
 books/*/_static/base.css
+
+.env
+emotionTextFiles/
+inputFiles/
+node_modules/
+outputAudios/
+scripts/__pycache__/
+scripts/audio_generator/
