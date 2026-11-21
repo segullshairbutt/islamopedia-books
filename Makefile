@@ -33,4 +33,9 @@ build_book_via_docker:
 	if ! docker image inspect $(IMAGE_NAME) > /dev/null 2>&1; then \
         $(MAKE) build_docker_image; \
     fi
-	docker run --rm -v $(PWD)/books/:/app/books -w /app/books/${BOOK_NAME} -t $(IMAGE_NAME) jupyter book build --html
+	docker run --rm \
+		-v $(PWD)/books/:/app/books \
+		-v $(PWD)/scripts/:/app/scripts:ro \
+		-w /app/books/${BOOK_NAME} \
+		-t $(IMAGE_NAME) \
+		sh -c "python3 /app/scripts/embed_fonts.py . && jupyter book build --html"
